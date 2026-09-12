@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mind</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --paper: #f2f3ee;
+    --ink: #1c211d;
+    --ink-soft: #565f59;
+    --line: #d8dbd2;
+    --accent: #2f6b52;
+    --accent-soft: #e3ece6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #141713;
+      --ink: #e9ece6;
+      --ink-soft: #a3aa9f;
+      --line: #2b322a;
+      --accent: #7fd7ac;
+      --accent-soft: #1d2b22;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 640px; margin: 0 auto; padding: 72px 24px 96px; }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.02em; margin: 0 0 20px; }
+  .eyebrow .box { color: var(--ink-soft); }
+  h1 { font-family: 'Fraunces', Georgia, serif; font-optical-sizing: auto; font-weight: 600; font-size: clamp(2.6rem, 6vw, 3.6rem); line-height: 1.05; letter-spacing: -0.01em; margin: 0 0 6px; text-wrap: balance; }
+  .dek { font-size: 19px; color: var(--ink-soft); margin: 0 0 48px; max-width: 34ch; }
+  h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 22px; margin: 0 0 12px; }
+  section { padding: 32px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; padding-top: 0; }
+  p { margin: 0 0 14px; max-width: 60ch; }
+  p:last-child { margin-bottom: 0; }
+  code { font-family: 'IBM Plex Mono', monospace; font-size: 0.9em; background: var(--accent-soft); color: var(--accent); padding: 0.1em 0.4em; border-radius: 3px; }
+  .footer { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 15px; color: var(--ink-soft); }
+  a { color: var(--ink); text-decoration-color: var(--line); text-underline-offset: 3px; }
+  a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow"><span class="box">- [x]</span> <code>AR-010</code></p>
+  <h1>Mind</h1>
+  <p class="dek">Un sistema personal de notas y tareas, con un puente de un solo sentido hacia Google Tasks.</p>
+
+  <section>
+    <h2>Qué es</h2>
+    <p>Mind es el sistema de organización personal de Aldo Daniel: proyectos, decisiones y pendientes guardados como archivos de texto plano en su computadora. No es un producto ni un servicio público — es una herramienta de uso individual.</p>
+  </section>
+
+  <section>
+    <h2>Qué hace este puente</h2>
+    <p>Un pequeño script local lee las acciones pendientes marcadas en los archivos de Mind y las refleja en una lista personal de Google Tasks, para poder marcarlas como hechas desde el teléfono. Los cambios en Google Tasks vuelven a Mind en el siguiente ciclo.</p>
+    <p>El cliente de Google Auth asociado a esta app es de tipo escritorio, de un único usuario y con un único permiso: <code>https://www.googleapis.com/auth/tasks</code>. Nadie más puede iniciar sesión con esta app.</p>
+  </section>
+
+  <section>
+    <h2>Contacto</h2>
+    <p>Cualquier pregunta sobre esta app o su uso de datos: <a href="mailto:apiduniam@gmail.com">apiduniam@gmail.com</a>.</p>
+  </section>
+
+  <div class="footer">
+    <span>Herramienta personal, no distribuida a terceros.</span>
+    <a href="privacy.html">Política de privacidad →</a>
+  </div>
+</div>
+</body>
+</html>

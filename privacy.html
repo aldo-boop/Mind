@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacidad — Mind</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --paper: #f2f3ee;
+    --ink: #1c211d;
+    --ink-soft: #565f59;
+    --line: #d8dbd2;
+    --accent: #2f6b52;
+    --accent-soft: #e3ece6;
+    --bad-soft: #f1e6e1;
+    --bad: #8a5233;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #141713;
+      --ink: #e9ece6;
+      --ink-soft: #a3aa9f;
+      --line: #2b322a;
+      --accent: #7fd7ac;
+      --accent-soft: #1d2b22;
+      --bad-soft: #2a221c;
+      --bad: #d99a70;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.6; margin: 0; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 640px; margin: 0 auto; padding: 72px 24px 96px; }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-soft); margin: 0 0 20px; }
+  h1 { font-family: 'Fraunces', Georgia, serif; font-optical-sizing: auto; font-weight: 600; font-size: clamp(2.2rem, 5vw, 3rem); line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 6px; text-wrap: balance; }
+  .dek { font-size: 18px; color: var(--ink-soft); margin: 0 0 48px; max-width: 40ch; }
+  h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 21px; margin: 0 0 12px; }
+  section { padding: 32px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; padding-top: 0; }
+  p { margin: 0 0 14px; max-width: 62ch; }
+  p:last-child { margin-bottom: 0; }
+  code { font-family: 'IBM Plex Mono', monospace; font-size: 0.88em; background: var(--accent-soft); color: var(--accent); padding: 0.1em 0.4em; border-radius: 3px; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-top: 4px; }
+  .split > div { background: var(--paper); padding: 18px; }
+  .split h3 { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0 0 12px; }
+  .split .yes h3 { color: var(--accent); }
+  .split .no h3 { color: var(--bad); }
+  .split ul { margin: 0; padding-left: 1.1em; font-size: 15px; }
+  .split li { margin-bottom: 8px; }
+  .split li:last-child { margin-bottom: 0; }
+  @media (max-width: 520px) { .split { grid-template-columns: 1fr; } }
+  .footer { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 15px; color: var(--ink-soft); }
+  a { color: var(--ink); text-decoration-color: var(--line); text-underline-offset: 3px; }
+  a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">Última actualización: 12 de septiembre de 2026</p>
+  <h1>Política de privacidad</h1>
+  <p class="dek">Qué hace el puente de Google Tasks de Mind con tus datos — y qué no hace.</p>
+
+  <section>
+    <h2>Quién usa esta app</h2>
+    <p>Mind es una herramienta personal de un solo usuario: Aldo Daniel, dueño de la cuenta de Google conectada. Esta app no está disponible para que otras personas inicien sesión, y no se ofrece como servicio a terceros.</p>
+  </section>
+
+  <section>
+    <h2>Qué permiso pide</h2>
+    <p>El único permiso solicitado es <code>https://www.googleapis.com/auth/tasks</code>, que permite leer y escribir tareas en Google Tasks. No se pide acceso a Gmail, Drive, Calendar ni a ningún otro dato de la cuenta.</p>
+  </section>
+
+  <section>
+    <h2>Qué información se comparte</h2>
+    <p>Por cada acción pendiente, el puente crea o actualiza una tarea en Google Tasks. Esto es lo que sale de la computadora y lo que se queda:</p>
+    <div class="split">
+      <div class="yes">
+        <h3>Va a Google Tasks</h3>
+        <ul>
+          <li>Código de la acción (ej. <code>AR-010</code>)</li>
+          <li>Título breve de la tarea</li>
+          <li>Proyecto al que pertenece</li>
+          <li>Ruta del archivo de origen</li>
+          <li>Fecha de vencimiento, si existe</li>
+        </ul>
+      </div>
+      <div class="no">
+        <h3>No sale de la computadora</h3>
+        <ul>
+          <li>El contenido de las notas</li>
+          <li>Decisiones, avances y contexto del proyecto</li>
+          <li>Cualquier otro archivo del sistema Mind</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dónde vive la credencial</h2>
+    <p>El token de acceso y las credenciales de OAuth se guardan localmente en la computadora de Aldo, en <code>%LOCALAPPDATA%\Mind\GoogleTasks\</code>. No se suben a ningún servidor ni se comparten con nadie.</p>
+  </section>
+
+  <section>
+    <h2>Cómo revocar el acceso</h2>
+    <p>El acceso puede revocarse en cualquier momento desde <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>, en la sección de apps de terceros conectadas.</p>
+  </section>
+
+  <section>
+    <h2>Contacto</h2>
+    <p>Preguntas sobre esta política: <a href="mailto:apiduniam@gmail.com">apiduniam@gmail.com</a>.</p>
+  </section>
+
+  <div class="footer">
+    <a href="index.html">← Mind</a>
+    <span>Herramienta personal, no distribuida a terceros.</span>
+  </div>
+</div>
+</body>
+</html>
