@@ -244,7 +244,7 @@ card(4284, 456, 492, 192, 'Inicio - comprobar versiones', 'La IA invoca inicio a
 card(4284, 684, 492, 192, 'Actualizar / reparar / recuperar', 'Manifiesto explícito y hashes. Solo archivos oficiales; respaldo y diario. Conserva Memoria, Del usuario y archivos ajenos. Si no puede recuperar, bloquea e informa.', dark=True, size=15, body_size=13)
 card(4284, 912, 492, 192, 'Adaptar - autorización separada', 'Una versión incompatible no se aplica sola. Copia, transformación estructural y cotejo de eventos, IDs y archivos antes de activar. Sin conservación, sigue lo anterior.', dark=True, size=15, body_size=13)
 card(4284, 1140, 492, 168, 'Pendientes de validación', 'Primer uso independiente. El puente usa la aplicación de la nube: no instala un proveedor ni activa respaldos. La IA no viene incluida.', dashed=True, size=15, body_size=13)
-text(4284, 1356, 'Referencias: Distribucion.md y sus pruebas.\nCanal estable publicado; puente para dev.25.\nNo hay servicio residente ni orquestador.', 492, 13, color=GRAY, leading=24)
+text(4284, 1356, 'Base: canal firmado; sin servicio residente.\nPieza propia opcional: respaldo personal.\nTarea de Windows → ZIP → Drive verificado.\nAutorización y carpeta de cada persona; fuera del paquete.', 492, 13, color=GRAY, leading=24)
 
 # El resultado técnico vuelve a la IA, que termina el trabajo y entrega.
 card(3096, 1788, 1008, 168, 'Resultado de vuelta al agente', 'Buscar y Colecciones: filas del índice, localizador y disponibilidad observada. Recordar: decisión compatible o ausencia.\nEscrituras: recibo, avisos y vistas regeneradas o pendientes.\nEl agente usa el resultado para completar el pedido.', size=16, body_size=14)
