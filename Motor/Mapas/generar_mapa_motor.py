@@ -243,7 +243,7 @@ card(4284, 252, 492, 168, 'Paquete Windows', 'Node incluido para x64 y ARM64. No
 card(4284, 456, 492, 192, 'Inicio - comprobar versiones', 'La IA invoca inicio antes de trabajar. Canal firmado y compatible; sin trabajo activo. Sin canal o sin red: versión local. Las acciones no consultan el canal.', dark=True, size=15, body_size=13)
 card(4284, 684, 492, 192, 'Actualizar / reparar / recuperar', 'Manifiesto explícito y hashes. Solo archivos oficiales; respaldo y diario. Conserva Memoria, Del usuario y archivos ajenos. Si no puede recuperar, bloquea e informa.', dark=True, size=15, body_size=13)
 card(4284, 912, 492, 192, 'Adaptar - autorización separada', 'Una versión incompatible no se aplica sola. Copia, transformación estructural y cotejo de eventos, IDs y archivos antes de activar. Sin conservación, sigue lo anterior.', dark=True, size=15, body_size=13)
-card(4284, 1140, 492, 168, 'Pendientes de validación', 'ARM64 real y primer uso independiente. El puente usa la aplicación de la nube: no instala un proveedor ni activa respaldos. La IA no viene incluida.', dashed=True, size=15, body_size=13)
+card(4284, 1140, 492, 168, 'Pendientes de validación', 'Primer uso independiente. El puente usa la aplicación de la nube: no instala un proveedor ni activa respaldos. La IA no viene incluida.', dashed=True, size=15, body_size=13)
 text(4284, 1356, 'Referencias: Distribucion.md y sus pruebas.\nCanal estable publicado; puente para dev.25.\nNo hay servicio residente ni orquestador.', 492, 13, color=GRAY, leading=24)
 
 # El resultado técnico vuelve a la IA, que termina el trabajo y entrega.
@@ -256,7 +256,7 @@ arrow([(4530, 1776), (4530, 1848)])
 text(4560, 1800, 'entrega verificada', 240, 12, color=GRAY)
 
 text(60, 2028, 'Negro: piezas oficiales / Claro: información y trabajo / Recuadro punteado: agrupación\nFlecha continua: lectura, llamada o resultado / Flecha punteada: referencia de ubicación; no ejecución.', 2328, 12, color=GRAY, leading=24)
-text(2544, 2028, 'Mind 1.2.3 - Publicado y comprobado: 211 pruebas - 2026-10-21\nLínea nueva: 1.2.x. Construcciones anteriores conservadas. ARM64 real pendiente.', 2316, 12, color=GRAY, leading=24, align='right')
+text(2544, 2028, 'Mind 1.2.3 - Publicado y comprobado: 211 pruebas - 2026-10-21\nLínea nueva: 1.2.x. Construcciones anteriores conservadas.', 2316, 12, color=GRAY, leading=24, align='right')
 
 # Comprobar que ningún conector atraviesa el interior de una tarjeta ajena.
 for points in connectors:
