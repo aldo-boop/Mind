@@ -1,0 +1,11 @@
+{
+  "version": "v24.22.0",
+  "arquitectura": "arm64",
+  "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-win-arm64.zip",
+  "sha256Zip": "3a5c209a5bc59e65b3bc0fa13ed5e166a26bd3d55332847f498b76b037408d61",
+  "bytesZip": 33770411,
+  "sha256Node": "df4b0e71e4e4d022bf8582fbe75f6061feb9c4a111a86f3fec6300d24b6fe5e0",
+  "bytesNode": 82123080,
+  "sha256Licencia": "ed34dd8e3f0a78dbaf00d0444ce8e285b015b765379c2e17880455f70370f8e9",
+  "sumas": "https://nodejs.org/dist/v24.22.0/SHASUMS256.txt"
+}

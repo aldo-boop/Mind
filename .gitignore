@@ -1,0 +1,11 @@
+# Se publican por el canal, no por git.
+/Entregas/
+Motor/Runtime/*/node.exe
+
+# Generado al construir.
+Motor/Distribucion/manifiesto.json
+
+# Nunca entran: datos personales y claves.
+/Memoria/
+*.pem
+.respaldos/
