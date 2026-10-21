@@ -7,7 +7,7 @@
 En Windows 10 u 11, abre PowerShell y pega:
 
 ```powershell
-irm https://raw.githubusercontent.com/aldo-boop/Mind/main/instalar.ps1 | iex
+irm https://aldo-boop.github.io/Mind/instalar.ps1 | iex
 ```
 
 Mind queda en el Escritorio, en la carpeta `Mind`. Abre tu IA dentro de esa carpeta (Claude Code, Codex, Gemini, Cursor, Copilot o cualquiera que lea archivos y ejecute comandos locales) y escribe «hola». No hay formulario previo: la Memoria empieza vacía y se llena trabajando.
@@ -29,12 +29,14 @@ Para construir una versión: restaura `Motor/Runtime/win32-*/node.exe` desde las
 
 ## Límites
 
-Windows x64 probado; ARM64 incluido pero sin ejecutar en equipo real. Versión de desarrollo (`2.0.0-dev`).
+Windows x64 probado; ARM64 incluido pero sin ejecutar en equipo real. Línea pública actual: Mind 1.2.x.
 
-## Mind 1.2.1
+## Mind 1.2.2
 
-La línea del nuevo Motor es Mind 1.2. Esta mejora es 1.2.1 y las siguientes serán 1.2.2, 1.2.3, etc. Las construcciones técnicas 2.0.0-dev y el Mind anterior se conservan como historia; no se reescriben sus paquetes ni sus registros.
+La línea del nuevo Motor es Mind 1.2. La versión actual es 1.2.2; cada mejora avanza a 1.2.3, 1.2.4, etc. Las construcciones técnicas 2.0.0-dev y el Mind anterior se conservan como historia; no se reescriben sus paquetes ni sus registros.
 
 La lectura empieza en Inicio, Perfil, Proyectos y Biblioteca. Con muchos frentes, Inicio muestra un resumen y conserva los siguientes pasos en sus fichas. Obsidian recibe valores iniciales de navegación y gráfico; los filtros propios se conservan y los cambios se respaldan.
 
 Para conectar Drive, OneDrive, Dropbox u otra nube con carpeta sincronizada, indica la carpeta que ya usa su aplicación. Mind recuerda la elección y sitúa allí las colecciones nuevas. Las existentes se trasladan cuando lo pidas, copiando y comprobando antes de cambiar sus referencias. La copia en el servidor se comprueba con el proveedor; nunca se deduce de que exista una unidad local. No se configura ningún respaldo automático al elegir la carpeta.
+
+El instalador público muestra una bienvenida breve, tres pasos de progreso y cómo empezar. El enlace corto y el enlace anterior llevan al mismo instalador; ambos conservan las comprobaciones y la autorización para instrucciones globales.

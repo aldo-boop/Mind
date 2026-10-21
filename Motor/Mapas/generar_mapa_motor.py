@@ -1,4 +1,4 @@
-"""Recorrido del Motor tras el Bloque 6.
+"""Recorrido del Motor de Mind 1.2.2 y su instalación pública.
 
 python generar_mapa_motor.py --output mapa.pdf [--render vista.png] [--font-dir carpeta]
 Requiere reportlab y pypdf; pypdfium2 solo si se pide render. No instala dependencias.
@@ -36,7 +36,7 @@ buf = io.BytesIO()
 c = canvas.Canvas(buf, pagesize=(W, H), pageCompression=1, invariant=1)
 c.setTitle('Mapa del Motor de Mind')
 c.setAuthor('Mind')
-c.setSubject('Motor 2.0.0-dev.23 - Bloques 1 a 7 ejecutados y revisados; pendientes explícitos')
+c.setSubject('Mind 1.2.2 - instalación, vistas universales y puente de carpeta sincronizada')
 checks, cards, connectors, text_boxes = [], [], [], []
 
 
@@ -150,7 +150,7 @@ def connector(points):
 
 
 text(60, 36, 'Mapa del Motor de Mind', 2112, 30, True)
-text(2544, 48, 'Instrucciones / Código implementado / Diseño pendiente - Bloque 6: reglas y mapas', 2316, 15, color=GRAY, align='right')
+text(2544, 48, 'Mind 1.2.2 - Instrucciones / Código publicado / Pendientes explícitos', 2316, 15, color=GRAY, align='right')
 
 # 1. Entradas de la herramienta e inicio de conversación.
 text(60, 552, '1 - Entrada y conversación', 636, 17, True)
@@ -167,12 +167,12 @@ text(60, 1044, 'Se abre el archivo que corresponde a la herramienta utilizada. T
 
 # 2. Inicio es una vista y el Controlador enlaza directamente los frentes.
 text(840, 516, '2 - Vistas generadas', 432, 17, True)
-panel(840, 552, 432, 624, 'Inicio.md', 'Vista generada desde los datos')
+panel(840, 552, 432, 624, 'Inicio.md', 'Inicio / Perfil / Proyectos / Biblioteca')
 card(864, 648, 384, 120, 'Reglas del usuario', 'Instrucciones generales confirmadas.', size=15, body_size=13)
 card(864, 804, 384, 120, 'Perfil', 'Una línea por faceta. El detalle se abre cuando hace falta.', size=15, body_size=13)
-card(864, 960, 384, 168, 'Controlador', 'Frentes activos por proyecto.\nProyecto, frente, turno y siguiente paso.\nEnlaza cada frente; no ejecuta trabajo.', size=15, body_size=13)
+card(864, 960, 384, 168, 'Controlador', 'Frentes por proyecto. Si no caben, muestra un resumen.\nDetalle y siguientes pasos en sus fichas.', size=15, body_size=13)
 arrow([(696, 804), (840, 804)])
-text(840, 1224, 'Bienvenida + Inicio: arranque breve.\nEl detalle se consulta según el pedido.', 432, 13, color=GRAY, leading=24)
+text(840, 1224, 'Arranque breve; reglas y Perfil conservados.\nNombres legibles y fuentes desplegables.\nObsidian: navegación y gráfico iniciales; conserva preferencias propias.', 432, 13, color=GRAY, leading=24)
 
 # La IA recibe prompt y contexto; las funciones son opcionales.
 card(1392, 144, 528, 192, 'Agente - decide y trabaja', 'Interpreta el pedido y lee Inicio.\nElige qué contexto abrir y qué función llamar.\nMind aporta información y código local.', size=16, body_size=14)
@@ -211,7 +211,7 @@ text(2112, 948, 'Mind.cmd + pedido JSON llama a ejecutar.mjs. Funciones sin llam
 card(2112, 996, 804, 120, 'Buscar', 'Consulta una tabla o rama. Devuelve diez resultados por defecto y hasta cincuenta.', dark=True, size=15, body_size=13)
 card(2112, 1164, 804, 120, 'Recordar', 'Consulta Decisiones directamente. Compara palabras de casos confirmados y exige condiciones comprobadas. Ante null o conflicto, la IA busca contexto o pregunta; no supone una decisión.', dark=True, size=15, body_size=13)
 card(2112, 1332, 804, 120, 'Frentes + Tablas - al guardar', 'Frentes abre proyecto con colección, gestiona su estado y registra los elementos que usa (uso). Tablas valida, guarda y regenera vistas; los fallos dejan recibos.', dark=True, size=15, body_size=13)
-card(2112, 1500, 804, 120, 'Colecciones - raíz, índice y ubicación', 'Prepara la raíz y busca. Inventaría sin abrir archivos; resuelve localizador y disponibilidad; registra enlaces sin acceder; reubica con copia verificada y los mismos IDs.', dark=True, size=15, body_size=13)
+card(2112, 1500, 804, 120, 'Colecciones - raíz, índice y ubicación', 'Raíz, índice y localizador. Acción nube: recuerda la carpeta sincronizada elegida. Reubica con copia verificada, conserva originales e IDs; no presupone la copia en el servidor.', dark=True, size=15, body_size=13)
 card(2112, 1668, 804, 120, 'Uso puntual: Seguridad + Adaptar', 'Seguridad exige escáner y autorización. Adaptar lleva los esquemas 1 y 2 al 3, incluidas sus ramas, con respaldo y autorización.', dark=True, size=15, body_size=13)
 
 # 5. Tablas y ubicaciones físicas, con consultas y escritura separadas.
@@ -229,9 +229,13 @@ text(3096, 1488, 'Índices, resolución y reubicación (Bloque 3)\ny acción uso
 panel(3672, 864, 432, 816, 'Ubicación física de la colección', 'Crear, vincular y reubicar: en código')
 card(3696, 1008, 384, 120, 'Externa - predeterminada', 'Carpeta en el Escritorio conocido de Windows, o base elegida.', size=14, body_size=12)
 card(3696, 1164, 384, 120, 'Carpeta existente', 'Vincula sin sobrescribir ni duplicar los archivos.', size=14, body_size=12)
-card(3696, 1320, 384, 120, 'Nube - explícita', 'Sincronizada: inventario sin descargar. Enlace: no se comprueba ni se descarga.', size=14, body_size=12)
+card(3696, 1320, 384, 120, 'Nube - carpeta elegida', 'Elige una carpeta ya sincronizada. Nuevas colecciones usan esa base. Conectar no mueve las existentes.', size=14, body_size=12)
 card(3696, 1476, 384, 120, 'Dentro de Mind', 'Crea o vincula en Memoria. Opción elegida por la persona.', size=14, body_size=12)
 info_arrow([(3504, 1206), (3600, 1206), (3600, 1068), (3672, 1068)])
+
+# Instalación: entrada pública de distribución, separada de las funciones del Motor.
+card(3096, 144, 1008, 288, 'Instalación pública - instalar.ps1', 'PowerShell: irm https://aldo-boop.github.io/Mind/instalar.ps1 | iex\nHTTPS, canal estable, tamaño y SHA-256; después verifica el manifiesto.\nBienvenida, tres pasos y cómo empezar. Instala, actualiza o repara.\nPaquete genérico: sin Memoria, credenciales ni datos de quien lo desarrolla.\nLa referencia global a Mind se agrega solo si la persona acepta.', dark=True, size=16, body_size=14)
+arrow([(4104, 336), (4284, 336)])
 
 # Mantenimiento independiente, implementado en el Bloque 5.
 panel(4260, 144, 540, 1428, 'Mantenimiento - código', 'Mind.cmd + actualizar.mjs: pedidos JSON y Node portátil')
@@ -239,8 +243,8 @@ card(4284, 252, 492, 168, 'Paquete Windows', 'Node incluido para x64 y ARM64. No
 card(4284, 456, 492, 192, 'Inicio - comprobar versiones', 'La IA invoca inicio antes de trabajar. Canal firmado y compatible; sin trabajo activo. Sin canal o sin red: versión local. Las acciones no consultan el canal.', dark=True, size=15, body_size=13)
 card(4284, 684, 492, 192, 'Actualizar / reparar / recuperar', 'Manifiesto explícito y hashes. Solo archivos oficiales; respaldo y diario. Conserva Memoria, Del usuario y archivos ajenos. Si no puede recuperar, bloquea e informa.', dark=True, size=15, body_size=13)
 card(4284, 912, 492, 192, 'Adaptar - autorización separada', 'Una versión incompatible no se aplica sola. Copia, transformación estructural y cotejo de eventos, IDs y archivos antes de activar. Sin conservación, sigue lo anterior.', dark=True, size=15, body_size=13)
-card(4284, 1140, 492, 168, 'Pendientes de validación', 'ARM64 real, canal real y revisar dev.23. Sin sincronización de proveedores ni exportación de proyectos. La IA no viene incluida.', dashed=True, size=15, body_size=13)
-text(4284, 1356, 'Referencias: Distribucion.md y sus pruebas.\nReglas e instrucciones alineadas en Bloque 6.\nNo hay servicio residente ni orquestador.', 492, 13, color=GRAY, leading=24)
+card(4284, 1140, 492, 168, 'Pendientes de validación', 'ARM64 real y primer uso independiente. El puente usa la aplicación de la nube: no instala un proveedor ni activa respaldos. La IA no viene incluida.', dashed=True, size=15, body_size=13)
+text(4284, 1356, 'Referencias: Distribucion.md y sus pruebas.\nCanal estable publicado; puente para dev.25.\nNo hay servicio residente ni orquestador.', 492, 13, color=GRAY, leading=24)
 
 # El resultado técnico vuelve a la IA, que termina el trabajo y entrega.
 card(3096, 1788, 1008, 168, 'Resultado de vuelta al agente', 'Buscar y Colecciones: filas del índice, localizador y disponibilidad observada. Recordar: decisión compatible o ausencia.\nEscrituras: recibo, avisos y vistas regeneradas o pendientes.\nEl agente usa el resultado para completar el pedido.', size=16, body_size=14)
@@ -252,7 +256,7 @@ arrow([(4530, 1776), (4530, 1848)])
 text(4560, 1800, 'entrega verificada', 240, 12, color=GRAY)
 
 text(60, 2028, 'Negro: piezas oficiales / Claro: información y trabajo / Recuadro punteado: agrupación\nFlecha continua: lectura, llamada o resultado / Flecha punteada: referencia de ubicación; no ejecución.', 2328, 12, color=GRAY, leading=24)
-text(2544, 2028, 'Motor 2.0.0-dev.23 - Bloques 1 a 5 en código - validación 7 revisada - 2026-10-19\nPendiente: revisar dev.23, ARM64 real y canal publicado. Las instrucciones no son automatismos.', 2316, 12, color=GRAY, leading=24, align='right')
+text(2544, 2028, 'Mind 1.2.2 - Publicado y comprobado: 211 pruebas - 2026-10-21\nLínea nueva: 1.2.x. Construcciones anteriores conservadas. ARM64 real pendiente.', 2316, 12, color=GRAY, leading=24, align='right')
 
 # Comprobar que ningún conector atraviesa el interior de una tarjeta ajena.
 for points in connectors:
@@ -284,7 +288,7 @@ c.showPage()
 c.save()
 writer = PdfWriter()
 writer.append(PdfReader(io.BytesIO(buf.getvalue())))
-writer.add_metadata({'/Title': 'Mapa del Motor de Mind', '/Author': 'Mind', '/Subject': 'Motor 2.0.0-dev.23 - Bloque 7: revisado y corregido'})
+writer.add_metadata({'/Title': 'Mapa del Motor de Mind', '/Author': 'Mind', '/Subject': 'Mind 1.2.2 - código publicado, instalación y carpeta de nube'})
 writer.add_attachment('generar_mapa_motor.py', Path(__file__).read_bytes())
 args.output.parent.mkdir(parents=True, exist_ok=True)
 with args.output.open('wb') as target:

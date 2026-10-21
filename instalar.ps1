@@ -1,7 +1,7 @@
 # Mind by Api D'Uniam Enterprises - instalador y reparador.
 # Windows PowerShell 5.1 o superior. Solo ASCII a proposito: se ejecuta tal cual llega por la red.
 #
-#   irm https://raw.githubusercontent.com/aldo-boop/Mind/main/instalar.ps1 | iex
+#   irm https://aldo-boop.github.io/Mind/instalar.ps1 | iex
 #
 # Instala Mind en el Escritorio (carpeta "Mind"). Si ya hay un Mind, lo actualiza o lo repara
 # conservando Memoria y piezas propias. Variables opcionales: MIND_DESTINO, MIND_SIN_PREGUNTAS.
@@ -29,6 +29,12 @@ function Install-Mind {
         return $salida
     }
 
+    Write-Host ''
+    Write-Host '  M I N D' -ForegroundColor White
+    Write-Host '  Tu segundo cerebro.' -ForegroundColor Gray
+    Write-Host "  by Api D'Uniam Enterprises" -ForegroundColor DarkGray
+    Write-Host ''
+
     try {
         $existe = Test-Path -LiteralPath $destino
         $esMind = $existe -and ((Test-Path -LiteralPath (Join-Path $destino 'Motor\version.json')) -or (Test-Path -LiteralPath (Join-Path $destino 'Mind.cmd')))
@@ -40,13 +46,13 @@ function Install-Mind {
         $web = New-Object Net.WebClient
         $web.Encoding = [Text.Encoding]::UTF8
 
-        Write-Host 'Consultando la version oficial de Mind...'
+        Write-Host '  Buscando la version mas reciente...' -ForegroundColor DarkGray
         $sobre = $web.DownloadString("$base/canal.json") | ConvertFrom-Json
         $pub = $sobre.contenido | ConvertFrom-Json
         if ($pub.paquete.url -notmatch '^[A-Za-z0-9._-]+\.zip$' -or $pub.paquete.sha256 -notmatch '^[a-f0-9]{64}$') { throw 'El descriptor de la version no es valido; no se instalo nada.' }
-        if ($pub.vence -and ([datetime]::Parse($pub.vence).ToUniversalTime() -lt [datetime]::UtcNow)) { throw 'La publicacion oficial vencio. Avisa a Api D''Uniam Enterprises; no se instalo nada.' }
+        if ($pub.vence -and (([datetime]$pub.vence).ToUniversalTime() -lt [datetime]::UtcNow)) { throw 'La publicacion oficial vencio. Avisa a Api D''Uniam Enterprises; no se instalo nada.' }
 
-        Write-Host ('Descargando Mind ' + $pub.motor + ' (' + [math]::Round($pub.paquete.bytes / 1MB) + ' MB)...')
+        Write-Host ('  [1/3] Descargando Mind ' + $pub.motor + ' | ' + [math]::Round($pub.paquete.bytes / 1MB) + ' MB') -ForegroundColor Gray
         $zip = Join-Path $tmp $pub.paquete.url
         $web.DownloadFile("$base/$($pub.paquete.url)", $zip)
         $huella = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLower()
@@ -59,11 +65,13 @@ function Install-Mind {
             $instalada = ''
             try { $instalada = (Get-Content -LiteralPath (Join-Path $destino 'Motor\version.json') -Raw | ConvertFrom-Json).motor } catch {}
             $operacion = if ($instalada -eq $pub.motor) { 'reparar-local' } else { 'actualizar-local' }
-            Write-Host ("Mind ya esta en $destino (" + $(if ($instalada) { $instalada } else { 'version desconocida' }) + '). Aplicando: ' + $operacion + '...')
+            $mensaje = if ($operacion -eq 'reparar-local') { 'Revisando tu Mind actual...' } else { 'Actualizando tu Mind...' }
+            Write-Host ('  [2/3] ' + $mensaje) -ForegroundColor Gray
             $null = Ejecutar-Mind (Join-Path $oficial 'Mind.cmd') @{ operacion = $operacion; destino = $destino }
             $hecho = if ($operacion -eq 'reparar-local') { 'reparado' } else { 'actualizado' }
         } else {
             $creada = -not $existe
+            Write-Host '  [2/3] Preparando tu Mind...' -ForegroundColor Gray
             [IO.Compression.ZipFile]::ExtractToDirectory($zip, $destino)
             $hecho = 'instalado'
         }
@@ -71,19 +79,30 @@ function Install-Mind {
         # Un ZIP no guarda carpetas vacias: se crean las que nombran Bienvenida y Funciones.
         foreach ($c in 'Motor\Capacidades\Base', 'Motor\Capacidades\Del usuario', 'Motor\Funciones\Del usuario') { New-Item -ItemType Directory -Force -Path (Join-Path $destino $c) | Out-Null }
 
-        Write-Host 'Comprobando cada archivo contra el manifiesto oficial...'
+        Write-Host '  [3/3] Comprobando que todo este listo...' -ForegroundColor Gray
         $revision = Ejecutar-Mind (Join-Path $destino 'Mind.cmd') @{ operacion = 'revisar' }
         $r = $revision | ConvertFrom-Json
         if ($r.problemasTotal -gt 0) { throw ('Quedaron ' + $r.problemasTotal + ' archivos distintos al manifiesto oficial.') }
 
         Write-Host ''
-        Write-Host "Listo: Mind $hecho en $destino" -ForegroundColor Green
-        Write-Host 'Abre tu IA (Claude Code, Codex, Gemini, Cursor, Copilot...) dentro de esa carpeta y escribe: hola'
-        Write-Host 'Para actualizar o reparar, repite el comando de instalacion o abre Recuperar.cmd en la carpeta.'
+        Write-Host '  Tu Mind esta listo.' -ForegroundColor White
+        Write-Host ("  Mind " + $pub.motor + " | $hecho") -ForegroundColor DarkGray
+        Write-Host ''
+        Write-Host '  Aqui empieza lo tuyo:' -ForegroundColor Gray
+        Write-Host ("  " + $destino) -ForegroundColor White
+        Write-Host ''
+        Write-Host '  Abre tu IA en esa carpeta y escribe: hola' -ForegroundColor White
+        Write-Host '  Mind se ira construyendo contigo, conversacion a conversacion.' -ForegroundColor Gray
+        Write-Host ''
+        Write-Host '  Para actualizar o reparar: repite este comando.' -ForegroundColor DarkGray
 
         if (-not $env:MIND_SIN_PREGUNTAS) {
             $resp = ''
-            try { $resp = Read-Host 'Quieres que tu IA encuentre Mind desde cualquier carpeta? Anade un bloque marcado a CLAUDE.md, AGENTS.md o GEMINI.md globales de tu usuario (s/N)' } catch {}
+            Write-Host ''
+            Write-Host '  Opcional: tu IA puede encontrar Mind desde cualquier carpeta.' -ForegroundColor Gray
+            Write-Host '  Se agrega su ubicacion a las instrucciones globales de tu IA' -ForegroundColor DarkGray
+            Write-Host '  (CLAUDE.md, AGENTS.md o GEMINI.md), guardando una copia previa.' -ForegroundColor DarkGray
+            try { $resp = Read-Host '  Activar? [s/N]' } catch {}
             if ($resp -match '^\s*(s|si|y|yes)\s*$') {
                 $bloque = "<!-- mind:inicio -->`r`nMind (segundo cerebro de esta persona) esta en `"$destino`". Fuera de esa carpeta, antes de una conversacion sustantiva, lee `"$destino\Bienvenida.md`" y sigue su arranque.`r`n<!-- /mind:inicio -->`r`n"
                 $globales = @(
@@ -104,12 +123,18 @@ function Install-Mind {
                     [IO.File]::WriteAllText($g, $texto + $bloque, $sinUtf8)
                     $tocados += $g
                 }
-                if ($tocados) { Write-Host ('Anclado en: ' + ($tocados -join ', ')) } else { Write-Host 'No encontre CLAUDE.md, Codex ni Gemini en tu usuario; no cambie nada.' }
+                if ($tocados) {
+                    Write-Host '  Listo. Tu IA ya puede encontrar Mind desde otras carpetas.' -ForegroundColor White
+                    foreach ($g in $tocados) { Write-Host ('  ' + $g) -ForegroundColor DarkGray }
+                } else {
+                    Write-Host '  No encontre una IA configurada. Puedes empezar desde la carpeta Mind.' -ForegroundColor Gray
+                }
             }
         }
     } catch {
         Write-Host ''
-        Write-Host ('No se pudo completar: ' + $_.Exception.Message) -ForegroundColor Red
+        Write-Host '  La instalacion no pudo terminar.' -ForegroundColor White
+        Write-Host ('  ' + $_.Exception.Message) -ForegroundColor Gray
         if ($creada -and (Test-Path -LiteralPath $destino)) { Remove-Item -LiteralPath $destino -Recurse -Force -ErrorAction SilentlyContinue }
     } finally {
         if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue }
