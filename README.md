@@ -7,7 +7,7 @@
 En Windows 10 u 11, abre PowerShell y pega:
 
 ```powershell
-irm https://aldo-boop.github.io/Mind/instalar.ps1 | iex
+irm https://byaldodaniel.github.io/Mind/instalar.ps1 | iex
 ```
 
 Mind queda en el Escritorio, en la carpeta `Mind`. Abre tu IA dentro de esa carpeta (Claude Code, Codex, Gemini, Cursor, Copilot o cualquiera que lea archivos y ejecute comandos locales) y escribe «hola». No hay formulario previo: la Memoria empieza vacía y se llena trabajando.
@@ -23,7 +23,7 @@ Mind consulta el canal oficial cuando empiezas a usarlo y aplica solo versiones 
 
 ## Qué hay aquí
 
-Este repositorio es el taller del Motor: código, reglas base, pruebas y el instalador. Las versiones firmadas (ZIP con Node portátil) se publican en https://aldo-boop.github.io/Mind/. Memoria y datos personales nunca entran al paquete.
+Este repositorio es el taller del Motor: código, reglas base, pruebas y el instalador. Las versiones firmadas (ZIP con Node portátil) se publican en https://byaldodaniel.github.io/Mind/. Memoria y datos personales nunca entran al paquete.
 
 Para construir una versión: restaura `Motor/Runtime/win32-*/node.exe` desde las URL y huellas de cada `procedencia.json` (no están en git por su tamaño), ejecuta `Motor/probar.mjs` y `Motor/Distribucion/construir.mjs` (ver `Motor/Distribucion/Distribucion.md`). La clave privada de publicación vive fuera del repositorio.
 
@@ -31,9 +31,9 @@ Para construir una versión: restaura `Motor/Runtime/win32-*/node.exe` desde las
 
 Windows x64 probado; ARM64 incluido pero sin ejecutar en equipo real. Línea pública actual: Mind 1.2.x.
 
-## Mind 1.2.2
+## Mind 1.2.3
 
-La línea del nuevo Motor es Mind 1.2. La versión actual es 1.2.2; cada mejora avanza a 1.2.3, 1.2.4, etc. Las construcciones técnicas 2.0.0-dev y el Mind anterior se conservan como historia; no se reescriben sus paquetes ni sus registros.
+La línea del nuevo Motor es Mind 1.2. La versión actual es 1.2.3; cada mejora avanza a 1.2.3, 1.2.4, etc. Las construcciones técnicas 2.0.0-dev y el Mind anterior se conservan como historia; no se reescriben sus paquetes ni sus registros.
 
 La lectura empieza en Inicio, Perfil, Proyectos y Biblioteca. Con muchos frentes, Inicio muestra un resumen y conserva los siguientes pasos en sus fichas. Obsidian recibe valores iniciales de navegación y gráfico; los filtros propios se conservan y los cambios se respaldan.
 

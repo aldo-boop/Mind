@@ -1,4 +1,4 @@
-"""Recorrido del Motor de Mind 1.2.2 y su instalación pública.
+"""Recorrido del Motor de Mind 1.2.3 y su instalación pública.
 
 python generar_mapa_motor.py --output mapa.pdf [--render vista.png] [--font-dir carpeta]
 Requiere reportlab y pypdf; pypdfium2 solo si se pide render. No instala dependencias.
@@ -36,7 +36,7 @@ buf = io.BytesIO()
 c = canvas.Canvas(buf, pagesize=(W, H), pageCompression=1, invariant=1)
 c.setTitle('Mapa del Motor de Mind')
 c.setAuthor('Mind')
-c.setSubject('Mind 1.2.2 - instalación, vistas universales y puente de carpeta sincronizada')
+c.setSubject('Mind 1.2.3 - instalación, vistas universales y puente de carpeta sincronizada')
 checks, cards, connectors, text_boxes = [], [], [], []
 
 
@@ -150,7 +150,7 @@ def connector(points):
 
 
 text(60, 36, 'Mapa del Motor de Mind', 2112, 30, True)
-text(2544, 48, 'Mind 1.2.2 - Instrucciones / Código publicado / Pendientes explícitos', 2316, 15, color=GRAY, align='right')
+text(2544, 48, 'Mind 1.2.3 - Instrucciones / Código publicado / Pendientes explícitos', 2316, 15, color=GRAY, align='right')
 
 # 1. Entradas de la herramienta e inicio de conversación.
 text(60, 552, '1 - Entrada y conversación', 636, 17, True)
@@ -234,7 +234,7 @@ card(3696, 1476, 384, 120, 'Dentro de Mind', 'Crea o vincula en Memoria. Opción
 info_arrow([(3504, 1206), (3600, 1206), (3600, 1068), (3672, 1068)])
 
 # Instalación: entrada pública de distribución, separada de las funciones del Motor.
-card(3096, 144, 1008, 288, 'Instalación pública - instalar.ps1', 'PowerShell: irm https://aldo-boop.github.io/Mind/instalar.ps1 | iex\nHTTPS, canal estable, tamaño y SHA-256; después verifica el manifiesto.\nBienvenida, tres pasos y cómo empezar. Instala, actualiza o repara.\nPaquete genérico: sin Memoria, credenciales ni datos de quien lo desarrolla.\nLa referencia global a Mind se agrega solo si la persona acepta.', dark=True, size=16, body_size=14)
+card(3096, 144, 1008, 288, 'Instalación pública - instalar.ps1', 'PowerShell: irm https://byaldodaniel.github.io/Mind/instalar.ps1 | iex\nHTTPS, canal estable, tamaño y SHA-256; después verifica el manifiesto.\nBienvenida, tres pasos y cómo empezar. Instala, actualiza o repara.\nPaquete genérico: sin Memoria, credenciales ni datos de quien lo desarrolla.\nLa referencia global a Mind se agrega solo si la persona acepta.', dark=True, size=16, body_size=14)
 arrow([(4104, 336), (4284, 336)])
 
 # Mantenimiento independiente, implementado en el Bloque 5.
@@ -256,7 +256,7 @@ arrow([(4530, 1776), (4530, 1848)])
 text(4560, 1800, 'entrega verificada', 240, 12, color=GRAY)
 
 text(60, 2028, 'Negro: piezas oficiales / Claro: información y trabajo / Recuadro punteado: agrupación\nFlecha continua: lectura, llamada o resultado / Flecha punteada: referencia de ubicación; no ejecución.', 2328, 12, color=GRAY, leading=24)
-text(2544, 2028, 'Mind 1.2.2 - Publicado y comprobado: 211 pruebas - 2026-10-21\nLínea nueva: 1.2.x. Construcciones anteriores conservadas. ARM64 real pendiente.', 2316, 12, color=GRAY, leading=24, align='right')
+text(2544, 2028, 'Mind 1.2.3 - Publicado y comprobado: 211 pruebas - 2026-10-21\nLínea nueva: 1.2.x. Construcciones anteriores conservadas. ARM64 real pendiente.', 2316, 12, color=GRAY, leading=24, align='right')
 
 # Comprobar que ningún conector atraviesa el interior de una tarjeta ajena.
 for points in connectors:
@@ -288,7 +288,7 @@ c.showPage()
 c.save()
 writer = PdfWriter()
 writer.append(PdfReader(io.BytesIO(buf.getvalue())))
-writer.add_metadata({'/Title': 'Mapa del Motor de Mind', '/Author': 'Mind', '/Subject': 'Mind 1.2.2 - código publicado, instalación y carpeta de nube'})
+writer.add_metadata({'/Title': 'Mapa del Motor de Mind', '/Author': 'Mind', '/Subject': 'Mind 1.2.3 - código publicado, instalación y carpeta de nube'})
 writer.add_attachment('generar_mapa_motor.py', Path(__file__).read_bytes())
 args.output.parent.mkdir(parents=True, exist_ok=True)
 with args.output.open('wb') as target:

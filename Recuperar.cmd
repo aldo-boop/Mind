@@ -4,7 +4,7 @@ rem Con MIND_PEDIDO (pedido reparar-local) usa esta carpeta como copia oficial, 
 setlocal
 if defined MIND_PEDIDO goto local
 set "MIND_DESTINO=%~dp0"
-"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -Command "irm https://raw.githubusercontent.com/aldo-boop/Mind/main/instalar.ps1 | iex"
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -Command "irm https://raw.githubusercontent.com/byaldodaniel/Mind/main/instalar.ps1 | iex"
 exit /b %errorlevel%
 :local
 call "%~dp0Mind.cmd"
