@@ -37,7 +37,7 @@ test('revisión: movimiento cortado dos veces recupera la identidad, el diario y
   // Otra instancia, sin caches de la ejecución interrumpida.
   abrirColecciones(abrirTablas(e.t.raiz)).indexar(pedido);comprobar(e,'B/nuevo.txt');
   const antes=e.filas();e.c.indexar(pedido);assert.deepEqual(e.filas(),antes);comprobar(e,'B/nuevo.txt');
-  const dir=join(e.t.raiz,'Vistas','Proyectos'),ficha=fs.readdirSync(dir).find(x=>x.startsWith('frente - Trabajo--'));
+  const dir=join(e.t.raiz,'Vistas','Proyectos'),ficha=fs.readdirSync(dir).find(x=>x.endsWith(' - Trabajo.md'));
   assert.ok(fs.readFileSync(join(dir,ficha),'utf8').includes(join(e.raiz,'B/nuevo.txt')));
 });
 

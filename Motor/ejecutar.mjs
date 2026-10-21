@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { abrirTablas } from './Funciones/Base/Tablas/tablas.mjs';
 import { abrirFrentes } from './Funciones/Base/Frentes/frentes.mjs';
 import { ejecutarColeccion } from './Funciones/Base/Colecciones/colecciones.mjs';
+import { ejecutarNube } from './Funciones/Base/Colecciones/nube.mjs';
 import { buscar,avisosCrecimiento } from './Funciones/Base/Buscar/buscar.mjs';
 import { adaptarEsqueleto } from './Funciones/Base/Adaptar/migrar.mjs';
 import { sembrarConceptosMind } from './Funciones/Base/Tablas/semilla-mind.mjs';
@@ -28,6 +29,8 @@ try {
   function ejecutar(){
   let r;
   switch(accion){
+    case 'nube':r=ejecutarNube(t,op);break;
+    case 'regenerar':r=t.regenerar();break;
     case 'inicializar':t.inicializar();r={estado:'inicializada',memoria,semilla:op.sembrar===true?sembrarConceptosMind(t):{agregados:0,conceptosBase:0}};break;
     case 'adaptar':if(op.confirmadoPorPersona!==true)throw new Error('Adaptar la Memoria requiere confirmación explícita de la persona');r=adaptarEsqueleto(motor,memoria,op);break;
     case 'buscar':r={filas:buscar(t,op),avisos:avisosCrecimiento(t,op)};break;

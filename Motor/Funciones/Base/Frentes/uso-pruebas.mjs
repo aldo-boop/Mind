@@ -29,7 +29,7 @@ function preparar(entorno,nombre,archivos) {
   const ref=rel=>({coleccion:p.coleccion.id,elemento:filas(entorno.t,p.coleccion).find(x=>x.direccion===rel).id});
   return {p,ref};
 }
-const ficha=(t,nombre)=>{const d=join(t.raiz,'Vistas','Proyectos');const n=fs.readdirSync(d).find(x=>x.startsWith('frente - '+nombre+'--'));return fs.readFileSync(join(d,n),'utf8');};
+const ficha=(t,nombre)=>{const d=join(t.raiz,'Vistas','Proyectos');const n=fs.readdirSync(d).find(x=>x.endsWith(' - '+nombre+'.md'));return fs.readFileSync(join(d,n),'utf8');};
 const contar=dir=>{let n=0;for(const e of fs.readdirSync(dir,{withFileTypes:true}))n+=e.isDirectory()?contar(join(dir,e.name)):1;return n;};
 
 test('dos frentes usan el mismo archivo sin copiarlo; retirar el uso de uno conserva el archivo, su índice y el otro uso',()=>{

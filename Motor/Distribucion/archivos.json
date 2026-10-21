@@ -51,6 +51,8 @@
     "Motor/actualizar.mjs",
     "Motor/ejecutar.mjs",
     "Motor/version.json",
-    "Recuperar.cmd"
+    "Recuperar.cmd",
+    "Motor/Funciones/Base/Tablas/obsidian.mjs",
+    "Motor/Funciones/Base/Colecciones/nube.mjs"
   ]
 }

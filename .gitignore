@@ -9,3 +9,6 @@ Motor/Distribucion/manifiesto.json
 /Memoria/
 *.pem
 .respaldos/
+
+# Preferencias locales, creadas al usar el Motor.
+/.obsidian/

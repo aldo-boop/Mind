@@ -37,7 +37,7 @@ test('proyecto con colección: una sola carpeta, fila y rama; reintentar no dupl
  assert.throws(()=>f.altaProyecto('Café Montaña','',{...si,coleccion:{base}}),/duplicado/);
  assert.equal(readdirSync(base).length,1);assert.deepEqual(t.operacionesPendientes(),[]);
  f.altaFrente({nombre:'Etiquetas',proyecto:'Café Montaña'},si);
- const ficha=readdirSync(join(t.raiz,'Vistas','Proyectos')).find(n=>n.startsWith('frente - '));
+ const ficha=readdirSync(join(t.raiz,'Vistas','Proyectos')).find(n=>readFileSync(join(t.raiz,'Vistas','Proyectos',n),'utf8').includes('ID: '));
  assert.match(readFileSync(join(t.raiz,'Vistas','Proyectos',ficha),'utf8'),/Colección del proyecto: Café Montaña — .* · local · rama: /);
 });
 test('carpeta existente se vincula sin tocar su contenido; también enlace y carpeta dentro de Mind',()=>{

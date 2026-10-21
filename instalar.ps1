@@ -11,7 +11,7 @@ function Install-Mind {
     $ProgressPreference = 'SilentlyContinue'
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch {}
 
-    $base = if ($env:MIND_BASE) { $env:MIND_BASE.TrimEnd('/') } else { 'https://aldo-boop.github.io/Mind' }
+    $base = if ($env:MIND_BASE) { $env:MIND_BASE.TrimEnd('/') } else { 'https://aldo-boop.github.io/Mind/estable' }
     $destino = if ($env:MIND_DESTINO) { $env:MIND_DESTINO.Trim() } else { Join-Path ([Environment]::GetFolderPath('Desktop')) 'Mind' }
     $destino = [IO.Path]::GetFullPath($destino).TrimEnd('\')
     $tmp = Join-Path ([IO.Path]::GetTempPath()) ('mind-instalacion-' + [guid]::NewGuid().ToString('N').Substring(0, 8))

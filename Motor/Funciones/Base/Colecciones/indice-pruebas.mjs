@@ -279,7 +279,7 @@ test('reubicar copia, verifica y cambia la raíz conservando IDs, referencias de
   assert.deepEqual(filas(t,raizDe(t,col)).map(x=>x.id).sort(),antes.map(x=>x.id).sort());
   for(const ref of refs){assert.equal(t.elemento(ref).elemento.id,ref.elemento);const res=c.resolver(ref);assert.ok(res.localizador.valor.startsWith(destinoFinal));assert.equal(res.observada.disponibilidad,'disponible');}
   assert.deepEqual(t.leer('proyectos').find(x=>x.id===fr.id).elementosUsados,refs);
-  const ficha=fs.readdirSync(join(t.raiz,'Vistas','Proyectos')).filter(n=>n.startsWith('frente - Usa recursos')).map(n=>fs.readFileSync(join(t.raiz,'Vistas','Proyectos',n),'utf8'))[0];
+  const ficha=fs.readdirSync(join(t.raiz,'Vistas','Proyectos')).filter(n=>n.endsWith(' - Usa recursos.md')).map(n=>fs.readFileSync(join(t.raiz,'Vistas','Proyectos',n),'utf8'))[0];
   assert.ok(ficha.includes(destinoFinal));
   assert.equal(c.reubicar({coleccion:col,destino:{base:disco},...si}).repetido,true);
   assert.deepEqual(fs.readdirSync(disco),[basename(dir)]);assert.equal(t.leer('colecciones').filter(x=>x.vigencia==='vigente').length,1);

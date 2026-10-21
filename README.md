@@ -30,3 +30,11 @@ Para construir una versión: restaura `Motor/Runtime/win32-*/node.exe` desde las
 ## Límites
 
 Windows x64 probado; ARM64 incluido pero sin ejecutar en equipo real. Versión de desarrollo (`2.0.0-dev`).
+
+## Mind 1.2.1
+
+La línea del nuevo Motor es Mind 1.2. Esta mejora es 1.2.1 y las siguientes serán 1.2.2, 1.2.3, etc. Las construcciones técnicas 2.0.0-dev y el Mind anterior se conservan como historia; no se reescriben sus paquetes ni sus registros.
+
+La lectura empieza en Inicio, Perfil, Proyectos y Biblioteca. Con muchos frentes, Inicio muestra un resumen y conserva los siguientes pasos en sus fichas. Obsidian recibe valores iniciales de navegación y gráfico; los filtros propios se conservan y los cambios se respaldan.
+
+Para conectar Drive, OneDrive, Dropbox u otra nube con carpeta sincronizada, indica la carpeta que ya usa su aplicación. Mind recuerda la elección y sitúa allí las colecciones nuevas. Las existentes se trasladan cuando lo pidas, copiando y comprobando antes de cambiar sus referencias. La copia en el servidor se comprueba con el proveedor; nunca se deduce de que exista una unidad local. No se configura ningún respaldo automático al elegir la carpeta.

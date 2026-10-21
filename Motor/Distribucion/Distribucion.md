@@ -37,3 +37,9 @@ Tras cada operación confirmada se conservan los tres respaldos de Motor más re
 La ejecución ARM64 necesita Windows ARM64 real o equivalente; incluir el binario o simular su selección no prueba su ejecución. Las pruebas no certifican recuperación ante pérdida física del disco ni frente a software hostil con control total de la máquina.
 
 Los fallos de consulta, descarga, firma o preparación conservan el Motor instalado y se informan como mantenimiento aplazado. Un diario que no pudo restaurarse bloquea el trabajo hasta recuperar una versión coherente. La falta de espacio se prueba mediante un fallo ENOSPC inyectado al respaldar, sin llenar ni cambiar permisos del disco personal.
+
+## Transición a 1.2.x
+
+La serie pública nueva comienza en 1.2.1. La comparación normaliza exclusivamente 2.0.0-dev.N como construcciones 1.2.0-dev.N; no rebaja versiones 2.0.0 estables. Cada publicación conserva la firma, huella, compatibilidad y prohibición de retroceso.
+
+El canal /Mind/canal.json conserva una publicación puente 2.0.0-dev.27 para las instalaciones que todavía usan el comparador anterior. Esa publicación cambia la confianza al canal /Mind/estable/canal.json, que entrega 1.2.1 y sus mejoras sucesivas. Se necesitan ambos canales: sustituir el canal antiguo por 1.2.1 dejaría a sus usuarios sin actualización automática. El instalador nuevo consulta directamente /estable. El estado de secuencia se interpreta por la URL del canal; dentro de cada canal siguen rechazándose publicaciones antiguas o contradictorias. El puente y su firma deben mantenerse disponibles para quienes vuelvan después.

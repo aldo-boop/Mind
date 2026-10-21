@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import {preferenciaDeNube} from './nube.mjs';
 import {join,dirname,resolve,isAbsolute,basename,relative,extname,posix} from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
@@ -77,6 +78,7 @@ export function abrirColecciones(tablas,{escritorio=escritorioWindows,archivos=f
     if(col.base&&(u.ubicacion==='mind'||u.ubicacion==='enlace'||local(u.ubicacion,col.base)!==dirname(local(u.ubicacion,u.direccion))))throw decidirUbicacion('La colección ya está en otra base; no se cambia su raíz al reintentar');
   }
   function prepararUbicacion(ctx,col,nombre) {
+    if(col&&typeof col==='object'&&!Array.isArray(col)&&Object.keys(col).length===0&&!ctx.paso('ubicacion'))col=preferenciaDeNube(tablas)||col;
     if(!col||typeof col!=='object'||Array.isArray(col)) throw decidirUbicacion('coleccion debe ser un objeto con la ubicación elegida');
     const hecha=ctx.paso('ubicacion');
     if(hecha)comprobarSolicitud(hecha,col);

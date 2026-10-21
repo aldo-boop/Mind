@@ -1,5 +1,5 @@
 {
-  "motor": "2.0.0-dev.25",
+  "motor": "1.2.1",
   "memoria": 3,
   "estado": "construccion-local"
 }

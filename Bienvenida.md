@@ -4,7 +4,7 @@ Mind es tu segundo cerebro: **Memoria** guarda lo tuyo y **Motor** hace trabajar
 
 ## Al arrancar
 
-Lee `Memoria/Vistas/Inicio.md` (tus reglas, tu Perfil y tus frentes) si existe y aún no lo tienes cargado. No abras nada más hasta que la tarea lo pida.
+Lee `Memoria/Vistas/Inicio.md` (tus reglas, tu Perfil y el resumen de proyectos; abre su ficha para ver los frentes) si existe y aún no lo tienes cargado. No abras nada más hasta que la tarea lo pida.
 
 Si no existe, el Mind es nuevo y está vacío: no hagas preguntas previas, empieza a trabajar. En tu primera respuesta, di en una línea que puede pedirte «¿cómo funciona Mind?» y abrirás la Guía. Inicio se crea cuando haya datos.
 
@@ -32,3 +32,5 @@ Sin canal publicado o sin red se usa la versión local. Las versiones oficiales 
 ## Reglas base: ábrelas cuando toque
 
 En `Motor/Reglas base/`: qué es Mind o cómo empezar → Guía. Perfil → Reglas del Perfil. Frentes y proyectos → Reglas de Proyectos. Decisiones → Reglas de Decisiones. Archivos y carpetas → Reglas de Colecciones. Estudio → Reglas de Conceptos. Estructura y actualizaciones → Reglas de la Memoria. Traer un sistema anterior → Reglas de Recepción.
+
+Para conectar una nube, basta indicar la carpeta que ya sincroniza su aplicación. Mind la recuerda para las colecciones nuevas; los traslados conservan los originales hasta comprobar su conservación.

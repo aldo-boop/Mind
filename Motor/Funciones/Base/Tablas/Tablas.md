@@ -47,3 +47,17 @@ Una operación reintentada recupera también las vistas pendientes aunque no agr
 El lote validado se guarda completo en el diario antes de agregar el primer bloque de eventos. Si una escritura se interrumpe entre ramas, la siguiente ejecución de la misma operación completa ese lote antes de volver al procedimiento; no depende de que el elemento siga vigente en su rama de origen. Un segundo fallo conserva tanto el lote como los escritos anteriores. Una caída real del proceso sigue requiriendo comprobar y liberar su candado antes de reanudar. No se descarta una operación con lote preparado.
 
 Volver a una rama anterior puede reactivar la versión retirada de un elemento con su mismo ID y colección; conserva sus eventos previos y exige que no haya otra versión vigente. Una identidad retirada nunca se adopta en otra colección. Los registros truncados siguen deteniendo la escritura: esta corrección no descarta bytes ni reconstruye un JSONL dañado por conjetura.
+
+## Lectura por niveles (dev.26)
+
+Inicio enlaza Perfil, Proyectos y Biblioteca. Las fichas tienen nombres legibles; los IDs permanecen en Tablas y solo desambiguan nombres coincidentes. La síntesis de cada faceta precede a un detalle plegable con todas las entradas, fuentes y observaciones identificadas. Biblioteca y los frentes enlazan los recursos desde sus ubicaciones registradas, sin copiarlos ni descargarlos. Las vistas de consulta conservan el detalle técnico. `regenerar` reconstruye las vistas mediante Mind.cmd sin alterar filas ni historia.
+
+## Versión 1.2.1 — presentación y nube
+
+La línea del Motor construido desde el nuevo comienzo es Mind 1.2; los identificadores 2.0.0-dev pertenecen a sus construcciones técnicas anteriores. Esta mejora se entrega como 1.2.1; las siguientes serán 1.2.2, etc. El esquema de Memoria sigue siendo 3.
+
+Inicio conserva los frentes completos cuando caben. Si supera el presupuesto, muestra sus cantidades y un resumen por proyecto; si ese resumen tampoco cabe, enlaza la lista completa. Los próximos pasos y registros permanecen en las fichas. Nunca se truncan las reglas de la persona ni se eliminan datos para reducir el arranque. Si las reglas y el Perfil por sí solos desbordan el presupuesto, se informa para revisarlos con la persona.
+
+Mind prepara los valores iniciales de Obsidian al empezar y los accesos principales al crear datos. Conserva filtros personalizados y marcadores existentes; respalda los archivos que cambia en .obsidian/.respaldos-mind. La acción de mantenimiento {"operacion":"vista"} permite repetirlo. Las preferencias de Obsidian son de la persona y no forman parte del manifiesto oficial de archivos reemplazables.
+
+Conectar una nube: {"operacion":"ejecutar","accion":"nube","datos":{"operacion":"conectar","carpeta":"RUTA_ABSOLUTA_ELEGIDA","confirmadoPorPersona":true}}. La carpeta debe existir y la aplicación del proveedor debe sincronizarla. La elección queda en Decisiones y Biblioteca; los proyectos nuevos crean su colección en Proyectos dentro de esa base. Una ubicación explícita de proyecto tiene prioridad. {"operacion":"estado"} consulta disponibilidad local. No se piden ni distribuyen credenciales, no se instala ningún proveedor, no se trasladan colecciones existentes al conectar, y un dato local nunca acredita la copia en el servidor. Para trasladar se usa coleccion reubicar: copia, coteja, conserva IDs y deja el original; la comprobación remota se realiza con el proveedor o conector disponible antes de retirar originales.

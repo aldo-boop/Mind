@@ -1,7 +1,7 @@
 import { mkdirSync, existsSync, readFileSync, writeFileSync, openSync, closeSync, fsyncSync, writeSync, renameSync, unlinkSync, lstatSync, readdirSync, fstatSync, readSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { hostname } from 'node:os';
 export { adaptarEsqueleto } from '../Adaptar/migrar.mjs';
 
@@ -232,11 +232,16 @@ export function abrirTablas(memoria) {
     const vigentes=t=>(cache.get(t)??[]).filter(f=>f.vigencia==='vigente');
     const perfil=vigentes('perfil'), proyectos=vigentes('proyectos'), decisiones=vigentes('decisiones');
     const enlace=(ruta,nombre)=>`[[Memoria/Vistas/${ruta}|${celda(nombre)}]]`;
-    // Título legible e ID estable: distingue títulos repetidos y evita rutas o caracteres de Windows.
+    // Nombres legibles; el ID permanece en Tablas. Solo se añade sufijo si dos nombres colisionan.
     const archivo=(tipo,id)=>{
       const fila=(tipo==='faceta'?perfil:proyectos).find(f=>f.id===id);
-      const titulo=String(fila?.nombre??fila?.faceta??tipo).normalize('NFKC').replace(/[<>:"/\\|?*\x00-\x1f\[\]#^]/g,'-').replace(/[. ]+$/g,'').slice(0,80).trim()||tipo;
-      return tipo+' - '+titulo+'--'+createHash('sha256').update(id).digest('hex').slice(0,16)+'.md';
+      const limpiar=s=>String(s).normalize('NFKC').replace(/[<>:"/\\|?*\x00-\x1f\[\]#^]/g,'-').replace(/[. ]+$/g,'').slice(0,80).trim()||'Sin nombre';
+      const nombre=f=>limpiar(f?.nombre??f?.faceta??tipo);
+      const base=f=>f?.tipo==='frente'?limpiar(proyectos.find(p=>p.id===f?.proyecto)?.nombre||'General')+' - '+nombre(f):nombre(f);
+      const lista=tipo==='faceta'?perfil.filter(f=>f.tipo==='faceta'):proyectos;
+      const repetidos=lista.filter(f=>base(f).toLocaleLowerCase('es')===base(fila).toLocaleLowerCase('es')).length>1;
+      const limpio=base(fila), reservado=/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(limpio);
+      return (reservado?'_':'')+limpio+(repetidos?' ('+createHash('sha256').update(id).digest('hex').slice(0,8)+')':'')+'.md';
     };
     const nodo=(carpeta,tipo,f,nombre)=>enlace(carpeta+'/'+archivo(tipo,f.id).slice(0,-3),nombre);
     function publicar(carpeta,archivos) {
@@ -278,6 +283,12 @@ export function abrirTablas(memoria) {
       const dir=seguro(join(raiz,'Vistas',TITULOS[t]));
       if(existsSync(dir)) for(const n of readdirSync(dir)) if(n.endsWith('.md')&&!vivas.has(n.slice(0,-3))) quitarVista(TITULOS[t]+'/'+n);
     }
+    const recurso=x=>{
+      if(!x.direccion)return celda(x.nombre)+' — sin ubicación registrada';
+      const u=x.ubicacion||(esAbsoluta(x.direccion)?'local':'mind');
+      const destino=u==='enlace'?x.direccion:pathToFileURL(u==='mind'?join(raiz,x.direccion):x.direccion).href;
+      return '['+celda(x.nombre)+']('+String(destino).replace(/\(/g,'%28').replace(/\)/g,'%29')+')';
+    };
     let secControlador=null, secPerfil=null, secReglas=null, idxProyectos=null, idxPerfil=null;
     const disponibles=proyectos.filter(f=>f.estado!=='terminado');
     const padres=disponibles.filter(f=>f.tipo==='proyecto'&&f.estado==='activo');
@@ -328,12 +339,12 @@ export function abrirTablas(memoria) {
           const cols=vigentes('colecciones').filter(x=>propia(x)||conectado(x,claves)).sort((a,b)=>propia(b)-propia(a)), cons=vigentes('conceptos').filter(x=>conectado(x,claves));
           const tope=8, mas=(lista,etiqueta)=>lista.length>tope?[`- …y ${lista.length-tope} ${etiqueta} más: búscalos con conectadoA.`]:[];
           const rama=x=>(x.ubicacion?' · '+celda(x.ubicacion):'')+(x.rama?' · rama: '+celda(x.rama):'');
-          vistasProyectos.set(archivo('frente',f.id),['# '+celda(f.nombre),'','ID: '+celda(f.id)+' · Proyecto: '+celda(p?.nombre),'Estado: '+celda(f.estado),'Turno: '+celda(f.turno),'Lo que sigue: '+celda(f.loQueSigue),'',celda(f.descripcion),'',
+          vistasProyectos.set(archivo('frente',f.id),['# '+celda(f.nombre),'','Proyecto: '+celda(p?.nombre),'Estado: '+celda(f.estado),'Turno: '+celda(f.turno),'Lo que sigue: '+celda(f.loQueSigue),'',celda(f.descripcion),'',
             '## Del proyecto','',celda(p?.descripcion),...decis.slice(0,5).map(d=>'- '+celda(d.decision)+(d.condicion?' · Cuando: '+celda(d.condicion):'')),...(decis.length>5?[`- …y ${decis.length-5} decisiones más en la vista del proyecto.`]:[]),'',
-            '## Para trabajar','',...cols.slice(0,tope).map(x=>'- '+(propia(x)?'Colección del proyecto':'Colección')+': '+celda(x.nombre)+' — '+celda(x.direccion)+rama(x)),...mas(cols,'colecciones'),
+            '## Para trabajar','',...cols.slice(0,tope).map(x=>'- '+recurso(x)),...mas(cols,'colecciones'),
             ...cons.slice(0,tope).map(x=>'- Concepto: '+celda(x.concepto)+' — '+celda(x.tema)+rama(x)),...mas(cons,'conceptos'),
             ...(cols.length||cons.length?[]:['- Aún no hay índices conectados a este frente o a su proyecto.']),
-            'Para ver más: buscar en colecciones o conceptos con conectadoA = '+celda(f.id)+' o '+celda(p?.id)+'; si una fila trae rama, busca dentro de ella.','',
+            '<details>','<summary>Datos de consulta</summary>','','ID: '+celda(f.id),'Para ver más: buscar en colecciones o conceptos con conectadoA = '+celda(f.id)+' o '+celda(p?.id)+'; si una fila trae rama, busca dentro de ella.',...cols.map(x=>'- '+(propia(x)?'Colección del proyecto':'Colección')+': '+celda(x.nombre)+' — '+celda(x.direccion)+rama(x)),'','</details>','',
             ...lineasUsos(f,p,tope),
             '## Subfrentes','',...frentes.filter(h=>padreDe(h)?.id===f.id).map(h=>'- '+nodo('Proyectos','frente',h,h.nombre))].join('\n'));
         }
@@ -363,7 +374,11 @@ export function abrirTablas(memoria) {
       if(tiene('perfil')) {
         for(const f of facetasVisibles) {
           const entradas=perfil.filter(e=>e.tipo==='entrada'&&(e.faceta===f.id||e.faceta===f.faceta));
-          vistasPerfil.set(archivo('faceta',f.id),['# '+celda(f.faceta),'',celda(f.afirmacion),'',...entradas.map(e=>'- '+celda(e.afirmacion)+' · Origen: '+celda(e.origen)+' · Fecha: '+celda(e.fecha)+(e.fuente?' · Fuente: '+celda(e.fuente):'')+(e.evidencia?' · Evidencia: '+celda(e.evidencia):'')+(e.limites?' · Límites: '+celda(e.limites):'')+(e.contradicciones?' · Contradicciones: '+celda(e.contradicciones):'')),'','## Subfacetas','',...facetasVisibles.filter(h=>facetaPadre(h)?.id===f.id).map(h=>'- '+nodo('Perfil','faceta',h,h.faceta))].join('\n'));
+          const detalle=entradas.map(e=>'- '+(e.origen==='interpreta'?'**Observación sin confirmar:** ':e.origen==='hizo'?'**Hecho observado:** ':'')+celda(e.afirmacion)+' · Origen: '+celda(e.origen)+' · Fecha: '+celda(e.fecha)+(e.fuente?' · Fuente: '+celda(e.fuente):'')+(e.evidencia?' · Evidencia: '+celda(e.evidencia):'')+(e.limites?' · Límites: '+celda(e.limites):'')+(e.contradicciones?' · Contradicciones: '+celda(e.contradicciones):''));
+          const hijos=facetasVisibles.filter(h=>facetaPadre(h)?.id===f.id);
+          vistasPerfil.set(archivo('faceta',f.id),['# '+celda(f.faceta),'',celda(f.afirmacion)||'Aún sin síntesis.',
+            ...(detalle.length?['','<details>','<summary>Detalle y fuentes ('+detalle.length+' entradas)</summary>','',...detalle,'','</details>']:[]),
+            ...(hijos.length?['','## Subfacetas','',...hijos.map(h=>'- '+nodo('Perfil','faceta',h,h.faceta))]:[])].join('\n'));
         }
       }
       publicar('Perfil',vistasPerfil);
@@ -380,15 +395,48 @@ export function abrirTablas(memoria) {
     // Una sola vista de arranque: Reglas del usuario, Perfil y Controlador en Inicio.md.
     for(const anterior of ['Controlador.md','Resumen del Perfil.md','Reglas del usuario.md']) quitarVista(anterior);
     if(['perfil','proyectos','decisiones'].every(t=>cache.has(t))) {
-      const secciones=[secReglas,secPerfil,secControlador].filter(Boolean),indice=[idxPerfil,idxProyectos].filter(Boolean);
-      if(indice.length) ponerVista('Índice.md',['# Índice','','Enlaces a cada ficha del Perfil y de los proyectos. No se lee al arrancar.','',...indice.flatMap(x=>[...x,''])]);
+      const desplegar=(titulo,lineas)=>lineas?['<details>','<summary>'+titulo+'</summary>','',...lineas,'','</details>']:null;
+      const secciones=[desplegar('Reglas de trabajo',secReglas),desplegar('Perfil',secPerfil),secControlador].filter(Boolean),indice=[idxPerfil,idxProyectos].filter(Boolean);
+      if(indice.length) ponerVista('Índice.md',['# Índice','','Consulta por dominio.','',...indice.flatMap(x=>[...x,''])]);
       else quitarVista('Índice.md');
       if(secciones.length) {
-        const lineas=['# Inicio','',...(indice.length?['Fichas: [[Memoria/Vistas/Índice|Índice]], o por nombre en Memoria/Vistas.','']:[]),...secciones.flatMap(x=>[...x,''])];
+        const navegacion=[...(idxPerfil?[enlace('Perfil','Perfil')]:[]),...(padres.length?[enlace('Proyectos','Proyectos')]:[]),...(tiene('colecciones')?[enlace('Biblioteca','Biblioteca')]:[])];
+        let lineas=['# Inicio','',...(navegacion.length?[navegacion.join(' · '),'']:[]),...(indice.length?['[[Memoria/Vistas/Índice|Índice]]','']:[]),...secciones.flatMap(x=>[...x,''])];
+        const medir=ls=>Math.ceil((marca+ls.join('\n')+'\n').length/4)+tokensBienvenida();
+        if(secControlador&&medir(lineas)>LIMITES.total){
+          const activos=frentes.filter(f=>f.estado==='activo');
+          const resumen=['## Controlador','',padres.length+' proyectos · '+activos.length+' frentes activos. Detalle y siguientes pasos en '+enlace('Proyectos','Proyectos')+'.','','| Proyecto | Frentes activos |','|---|---|',...padres.map(p=>'| '+nodo('Proyectos','proyecto',p,p.nombre)+' | '+activos.filter(f=>f.proyecto===p.id).length+' |')];
+          const armar=control=>['# Inicio','',...(navegacion.length?[navegacion.join(' · '),'']:[]),...(indice.length?['[[Memoria/Vistas/Índice|Índice]]','']:[]),...secciones.slice(0,-1).flatMap(x=>[...x,'']),...control,''];
+          lineas=armar(resumen);
+          if(medir(lineas)>LIMITES.total)lineas=armar(resumen.slice(0,3));
+        }
         ponerVista('Inicio.md',lineas);
         const tokens=Math.ceil((marca+lineas.join('\n')+'\n').length/4)+tokensBienvenida();
         if(tokens>LIMITES.total) avisos.push(`Arranque: Bienvenida + Inicio.md suman unos ${tokens} tokens y superan ${LIMITES.total}; conviene resumir con la persona.`);
       } else quitarVista('Inicio.md');
+    }
+    if(cache.has('perfil')) {
+      if(idxPerfil) ponerVista('Perfil.md',['# Perfil','',...facetasVisibles.filter(f=>!f.perteneceA).map(f=>'- '+nodo('Perfil','faceta',f,f.faceta)+': '+celda(f.afirmacion||'Aún sin síntesis.'))]);
+      else quitarVista('Perfil.md');
+    }
+    if(cache.has('proyectos')) {
+      if(padres.length) ponerVista('Proyectos.md',['# Proyectos','',...padres.map(p=>'- '+nodo('Proyectos','proyecto',p,p.nombre))]);
+      else quitarVista('Proyectos.md');
+    }
+    if(cache.has('colecciones')) {
+      const colecciones=vigentes('colecciones').filter(c=>c.clase==='coleccion'&&c.direccion);
+      if(colecciones.length) {
+        const grupos=new Map();
+        for(const c of colecciones) {
+          const p=proyectos.find(p=>p.id===c.proyecto||p.nombre===c.proyecto);
+          const vinculos=Array.isArray(c.conectadoA)?c.conectadoA:[c.conectadoA];
+          const vinculado=proyectos.find(p=>p.tipo==='proyecto'&&vinculos.includes(p.id));
+          const grupo=p?.nombre||vinculado?.nombre||'Personal y compartido';
+          if(!grupos.has(grupo))grupos.set(grupo,[]);
+          grupos.get(grupo).push('- '+recurso(c));
+        }
+        ponerVista('Biblioteca.md',['# Biblioteca','','Documentos y recursos completos; cada enlace abre su ubicación registrada.','',...[...grupos].flatMap(([nombre,filas])=>['## '+celda(nombre),'',...filas,''])]);
+      } else quitarVista('Biblioteca.md');
     }
     if(errores.length) throw errores[0];
     return {regenerada:true,avisos};

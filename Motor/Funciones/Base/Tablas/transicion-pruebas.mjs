@@ -1,0 +1,30 @@
+import test from 'node:test';import assert from 'node:assert/strict';import * as fs from 'node:fs';import {join,dirname} from 'node:path';import {tmpdir} from 'node:os';import {fileURLToPath,pathToFileURL} from 'node:url';import {createServer} from 'node:http';import {generateKeyPairSync} from 'node:crypto';
+import {prepararManifiesto,construirPublicacion} from '../../../Distribucion/construir.mjs';import {actualizar} from '../../../actualizar.mjs';import {inicio} from '../../../Distribucion/canal.mjs';import {gestionar} from '../../../Distribucion/gestionar.mjs';import {abrirTablas} from './tablas.mjs';
+const source=fileURLToPath(new URL('../../../',import.meta.url));
+const tmp=()=>fs.mkdtempSync(join(tmpdir(),'mind-transicion-'));
+test('1.2: un lector real dev.25 recibe el puente y luego 1.2.1; volver tarde también funciona y conserva Memoria',async()=>{
+ const {privateKey,publicKey}=generateKeyPairSync('ed25519'),key=publicKey.export({type:'spki',format:'pem'}),routes=new Map();
+ const server=createServer((req,res)=>{const body=routes.get(req.url);if(!body){res.statusCode=404;res.end();return}res.setHeader('Content-Length',body.length);res.end(body)});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+ const fixture=(motor,canal,legacy=false)=>{const root=tmp();const files=JSON.parse(fs.readFileSync(join(source,'Distribucion/archivos.json'))).archivos.filter(p=>!p.startsWith('Motor/Runtime/'));for(const file of files){const out=join(root,file);fs.mkdirSync(dirname(out),{recursive:true});fs.copyFileSync(join(source,'..',file),out)}fs.writeFileSync(join(root,'Motor/Distribucion/archivos.json'),JSON.stringify({formato:1,archivos:files}));fs.writeFileSync(join(root,'Motor/version.json'),JSON.stringify({motor,memoria:3}));fs.writeFileSync(join(root,'Motor/Distribucion/confianza.json'),JSON.stringify({formato:1,canal,claves:{prueba:key}}));if(legacy)fs.copyFileSync(join(source,'Distribucion/fixtures/canal-dev25.txt'),join(root,'Motor/Distribucion/canal.mjs'));prepararManifiesto(root);return root};
+ const publish=(root,route,seq)=>{const out=tmp();const r=construirPublicacion({origen:root,salida:out,clave:'prueba',privada:privateKey,secuencia:seq,publicado:new Date().toISOString()});routes.set(route+'/canal.json',fs.readFileSync(join(out,'canal.json')));routes.set(route+'/'+r.paquete.split(/[\\/]/).at(-1),fs.readFileSync(r.paquete));return r};
+ try{
+  const old=fixture('2.0.0-dev.25',base+'/canal.json',true),bridge=fixture('2.0.0-dev.27',base+'/estable/canal.json'),canonical=fixture('1.2.1',base+'/estable/canal.json');
+  publish(canonical,'/estable',4);publish(bridge,'',3);const legacy=await import(pathToFileURL(join(old,'Motor/Distribucion/canal.mjs')));
+  const destination=tmp();actualizar({origen:old,destino:destination});const t=abrirTablas(join(destination,'Memoria')).inicializar();t.alta('conceptos',{concepto:'Dato de la persona',tema:'Propio'});const jsonl=fs.readFileSync(join(destination,'Memoria/Tablas/conceptos.jsonl'));
+  const bridgeDescriptor=routes.get('/canal.json');routes.set('/canal.json',routes.get('/estable/canal.json'));const rejected=await legacy.inicio({destino:destination,permitirLocal:true});assert.equal(rejected.codigo,'PUBLICACION_ANTIGUA');routes.set('/canal.json',bridgeDescriptor);
+  const first=await legacy.inicio({destino:destination,permitirLocal:true});assert.equal(first.estado,'actualizado');assert.equal(JSON.parse(fs.readFileSync(join(destination,'Motor/version.json'))).motor,'2.0.0-dev.27');
+  // El canal nuevo puede tener su propia secuencia; no hereda el contador de otra URL.
+  const state=JSON.parse(fs.readFileSync(join(destination,'Motor/.canal-estado.json')));state.secuencia=99;fs.writeFileSync(join(destination,'Motor/.canal-estado.json'),JSON.stringify(state));
+  const second=await inicio({destino:destination,permitirLocal:true});assert.equal(second.estado,'actualizado');assert.equal(JSON.parse(fs.readFileSync(join(destination,'Motor/version.json'))).motor,'1.2.1');assert.deepEqual(fs.readFileSync(join(destination,'Memoria/Tablas/conceptos.jsonl')),jsonl);
+  assert.equal((await inicio({destino:destination,permitirLocal:true})).estado,'sin-novedades');
+  const late=tmp();actualizar({origen:old,destino:late});assert.equal((await legacy.inicio({destino:late,permitirLocal:true})).estado,'actualizado');assert.equal((await inicio({destino:late,permitirLocal:true})).estado,'actualizado');
+ }finally{server.closeAllConnections();await new Promise(r=>server.close(r));}
+});
+test('1.2: el primer arranque reconstruye vistas antiguas sin cambiar la tabla fuente',async()=>{
+ const root=tmp();fs.mkdirSync(join(root,'Motor/Distribucion'),{recursive:true});fs.writeFileSync(join(root,'Motor/Distribucion/confianza.json'),JSON.stringify({formato:1,canal:null,claves:{}}));fs.writeFileSync(join(root,'Motor/version.json'),JSON.stringify({motor:'1.2.1',memoria:3}));
+ // gestionar usa el ejecutor del destino: una fuente ficticia completa, sin runtimes ni cuentas.
+ const files=JSON.parse(fs.readFileSync(join(source,'Distribucion/archivos.json'))).archivos.filter(p=>!p.startsWith('Motor/Runtime/'));
+ for(const file of files){if(file==='Motor/Distribucion/confianza.json'||file==='Motor/version.json')continue;const out=join(root,file);fs.mkdirSync(dirname(out),{recursive:true});fs.copyFileSync(join(source,'..',file),out)}
+ const t=abrirTablas(join(root,'Memoria')).inicializar();t.alta('perfil',{tipo:'faceta',faceta:'Arte',afirmacion:'Creo'});const original=fs.readFileSync(join(root,'Memoria/Tablas/perfil.jsonl'));fs.writeFileSync(join(root,'Memoria/Vistas/Perfil/faceta - Arte--vieja.md'),'<!-- mind:vista-derivada -->\nvieja');
+ const result=await gestionar(root,{operacion:'inicio'});assert.equal(result.vistas.regenerada,true);assert.equal(fs.existsSync(join(root,'Memoria/Vistas/Perfil/faceta - Arte--vieja.md')),false);assert.deepEqual(fs.readFileSync(join(root,'Memoria/Tablas/perfil.jsonl')),original);assert.equal((await gestionar(root,{operacion:'inicio'})).vistas.estado,'vigentes');
+});

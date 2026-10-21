@@ -87,3 +87,17 @@ Tablas reconstruye en `Memoria/Vistas/` únicamente las vistas de los dominios q
 
 El arranque de lectura es Bienvenida.md y Memoria/Vistas/Inicio.md si existe. Esa lectura no ejecuta código. Antes de usar funciones, la IA invoca Mind.cmd sin pedido para comprobar estado y publicaciones; esto sí ejecuta el mantenimiento definido en Distribución. El detalle y las vistas de consulta no se cargan; las líneas de frentes activos y facetas raíz sí cuentan en el arranque. Presupuesto: Bienvenida ≤ 1.000 tokens estimados y Bienvenida + Inicio ≤ 2.000 (`LIMITES` en Tablas). Tablas avisa en cada escritura si Inicio lo supera y el actualizador lo comprueba al instalar; nunca se ocultan filas.
 
+
+## Lectura por niveles (dev.26)
+
+Inicio enlaza Perfil, Proyectos y Biblioteca. Las fichas tienen nombres legibles; los IDs permanecen en Tablas y solo desambiguan nombres coincidentes. La síntesis de cada faceta precede a un detalle plegable con todas las entradas, fuentes y observaciones identificadas. Biblioteca y los frentes enlazan los recursos desde sus ubicaciones registradas, sin copiarlos ni descargarlos. Las vistas de consulta conservan el detalle técnico. `regenerar` reconstruye las vistas mediante Mind.cmd sin alterar filas ni historia.
+
+## Versión 1.2.1 — presentación y nube
+
+La línea del Motor construido desde el nuevo comienzo es Mind 1.2; los identificadores 2.0.0-dev pertenecen a sus construcciones técnicas anteriores. Esta mejora se entrega como 1.2.1; las siguientes serán 1.2.2, etc. El esquema de Memoria sigue siendo 3.
+
+Inicio conserva los frentes completos cuando caben. Si supera el presupuesto, muestra sus cantidades y un resumen por proyecto; si ese resumen tampoco cabe, enlaza la lista completa. Los próximos pasos y registros permanecen en las fichas. Nunca se truncan las reglas de la persona ni se eliminan datos para reducir el arranque. Si las reglas y el Perfil por sí solos desbordan el presupuesto, se informa para revisarlos con la persona.
+
+Mind prepara los valores iniciales de Obsidian al empezar y los accesos principales al crear datos. Conserva filtros personalizados y marcadores existentes; respalda los archivos que cambia en .obsidian/.respaldos-mind. La acción de mantenimiento {"operacion":"vista"} permite repetirlo. Las preferencias de Obsidian son de la persona y no forman parte del manifiesto oficial de archivos reemplazables.
+
+Conectar una nube: {"operacion":"ejecutar","accion":"nube","datos":{"operacion":"conectar","carpeta":"RUTA_ABSOLUTA_ELEGIDA","confirmadoPorPersona":true}}. La carpeta debe existir y la aplicación del proveedor debe sincronizarla. La elección queda en Decisiones y Biblioteca; los proyectos nuevos crean su colección en Proyectos dentro de esa base. Una ubicación explícita de proyecto tiene prioridad. {"operacion":"estado"} consulta disponibilidad local. No se piden ni distribuyen credenciales, no se instala ningún proveedor, no se trasladan colecciones existentes al conectar, y un dato local nunca acredita la copia en el servidor. Para trasladar se usa coleccion reubicar: copia, coteja, conserva IDs y deja el original; la comprobación remota se realiza con el proveedor o conector disponible antes de retirar originales.

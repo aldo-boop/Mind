@@ -27,3 +27,11 @@ Inventariar no abre ni descarga contenido. Guardar un enlace no comprueba acceso
 Las piezas propias van en Memoria o Del usuario. Las extensiones externas necesitan escaneo SAFE y autorización; todavía no hay un cargador aislado para ejecutarlas. Un escaneo no garantiza seguridad absoluta. Lo retirado de las tablas conserva historial. Las actualizaciones compatibles no escriben Memoria; una adaptación autorizada transforma su estructura en una copia cotejada y conserva respaldo.
 
 La entrega funciona y se ha probado en Windows x64. El paquete incluye runtime ARM64, pendiente de ejecución en un entorno ARM64. Las versiones oficiales llegan por un canal firmado cuando hay red; sin red se usa la versión local. Los mapas distinguen estas limitaciones del código disponible.
+
+## Mind 1.2.1
+
+La línea del nuevo Motor es Mind 1.2. Esta mejora es 1.2.1 y las siguientes serán 1.2.2, 1.2.3, etc. Las construcciones técnicas 2.0.0-dev y el Mind anterior se conservan como historia; no se reescriben sus paquetes ni sus registros.
+
+La lectura empieza en Inicio, Perfil, Proyectos y Biblioteca. Con muchos frentes, Inicio muestra un resumen y conserva los siguientes pasos en sus fichas. Obsidian recibe valores iniciales de navegación y gráfico; los filtros propios se conservan y los cambios se respaldan.
+
+Para conectar Drive, OneDrive, Dropbox u otra nube con carpeta sincronizada, indica la carpeta que ya usa su aplicación. Mind recuerda la elección y sitúa allí las colecciones nuevas. Las existentes se trasladan cuando lo pidas, copiando y comprobando antes de cambiar sus referencias. La copia en el servidor se comprueba con el proveedor; nunca se deduce de que exista una unidad local. No se configura ningún respaldo automático al elegir la carpeta.

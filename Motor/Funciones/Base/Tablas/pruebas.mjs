@@ -231,15 +231,15 @@ test('la ficha del frente trae su proyecto y los índices conectados; el Control
  t.alta('decisiones',{proyecto:p.id,decision:'Fondo blanco',estado:'confirmada'});
  t.alta('colecciones',{nombre:'Recursos de producto',direccion:'D:/Aurora/Recursos',conectadoA:[f.id]});
  t.alta('conceptos',{concepto:'Bolso de muestra',tema:'Productos',conectadoA:[p.id]});
- const fichas=[...leerVistas19(t)].filter(([k])=>k.startsWith('Proyectos/frente - ')).map(([,v])=>v);assert.equal(fichas.length,1);
+ const fichas=[...leerVistas19(t)].filter(([k])=>k==='Proyectos/Taller Aurora - Contenido de muestra.md').map(([,v])=>v);assert.equal(fichas.length,1);
  assert.match(fichas[0],/Del proyecto[\s\S]*Talleres[\s\S]*Fondo blanco/);
- assert.match(fichas[0],/Para trabajar[\s\S]*Recursos de producto — D:\/Aurora\/Recursos[\s\S]*Bolso de muestra/);
+ assert.match(fichas[0],/Para trabajar[\s\S]*\[Recursos de producto\]\(file:\/\/\/D:\/Aurora\/Recursos\)[\s\S]*Bolso de muestra/);
  assert.ok(fichas[0].includes('ID: '+f.id));
  const inicio=readFileSync(join(t.raiz,'Vistas','Inicio.md'),'utf8');
  assert.match(inicio,/\| Taller Aurora \| Contenido de muestra \|\s*\| Grabar \|/);
- assert.ok(!inicio.includes('[[Memoria/Vistas/Proyectos'),'Inicio no lleva rutas de fichas');
+ assert.ok(!inicio.includes('[[Memoria/Vistas/Proyectos/'),'Inicio no lleva rutas de fichas');
  assert.ok(inicio.includes('[[Memoria/Vistas/Índice|Índice]]'),'Inicio lleva al Índice');
- assert.match(readFileSync(join(t.raiz,'Vistas','Índice.md'),'utf8'),/\[\[Memoria\/Vistas\/Proyectos\/frente - Contenido de muestra--[0-9a-f]{16}\|Contenido de muestra\]\]/);
+ assert.match(readFileSync(join(t.raiz,'Vistas','Índice.md'),'utf8'),/\[\[Memoria\/Vistas\/Proyectos\/Taller Aurora - Contenido de muestra\|Contenido de muestra\]\]/);
  arbol19(t);
 });
 
@@ -320,4 +320,25 @@ test('candado de un proceso que murió: se informa, la persona lo libera y la op
  assert.match(readFileSync(join(t.raiz,'Vistas','Conceptos.md'),'utf8'),/Antes de caer/);
  writeFileSync(join(t.raiz,'.escritura.lock'),JSON.stringify({pid:process.pid,host:hostname(),inicio:'x'}));
  assert.throws(()=>t.liberarCandado({confirmadoPorPersona:true}),/vivo/);unlinkSync(join(t.raiz,'.escritura.lock'));
+});
+
+test('dev.26: nombres legibles, colisiones entre proyecto y frente, resumen plegable y conservación de evidencia',()=>{
+ const t=nueva(),p=t.alta('proyectos',{tipo:'proyecto',nombre:'Aurora',estado:'activo'});
+ const f=t.alta('proyectos',{tipo:'frente',nombre:'Contenido',proyecto:p.id,estado:'activo'});
+ const q=t.alta('proyectos',{tipo:'proyecto',nombre:'Aurora - Contenido',estado:'activo'});
+ const fac=t.alta('perfil',{tipo:'faceta',faceta:'Aprendizaje',afirmacion:'Aprendo practicando.'});
+ t.alta('perfil',{tipo:'entrada',faceta:fac.id,afirmacion:'Puede ayudar la práctica',origen:'interpreta',fuente:'Caso ficticio',evidencia:'Un caso',limites:'Sin confirmar'});
+ const before=readFileSync(join(t.raiz,'Tablas','perfil.jsonl'),'utf8');
+ const views=arbol19(t),profile=views.get('Perfil/Aprendizaje.md');
+ assert.match(profile,/# Aprendizaje[\s\S]*Aprendo practicando\.[\s\S]*<details>[\s\S]*Observación sin confirmar[\s\S]*Caso ficticio[\s\S]*Sin confirmar[\s\S]*<\/details>/);
+ const collisions=[...views.keys()].filter(k=>k.startsWith('Proyectos/Aurora - Contenido ('));
+ assert.equal(collisions.length,2);assert.notEqual(collisions[0],collisions[1]);
+ assert.ok(views.has('Perfil.md'));assert.ok(views.has('Proyectos.md'));
+ t.regenerar();assert.equal(readFileSync(join(t.raiz,'Tablas','perfil.jsonl'),'utf8'),before);
+});
+test('dev.26: Biblioteca agrupa enlaces externos y retiro del último proyecto no deja enlaces rotos',()=>{
+ const t=nueva(),p=t.alta('proyectos',{tipo:'proyecto',nombre:'Aurora',estado:'activo'});
+ t.alta('colecciones',{nombre:'Recursos',direccion:'G:/Biblioteca/Aurora',ubicacion:'sincronizada',proyecto:p.id});
+ let views=arbol19(t);assert.match(views.get('Biblioteca.md'),/## Aurora[\s\S]*file:\/\/\/G:\/Biblioteca\/Aurora/);
+ t.retirar('proyectos',p.id);views=arbol19(t);assert.equal(views.has('Proyectos.md'),false);assert.doesNotMatch(views.get('Inicio.md')||'',/Vistas\/Proyectos\|/);
 });

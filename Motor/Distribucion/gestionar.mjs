@@ -1,18 +1,31 @@
 // Entrada independiente de las funciones de Memoria: permite reparar el núcleo antes de cargarlo.
 import * as fs from 'node:fs';
+import {prepararObsidian} from '../Funciones/Base/Tablas/obsidian.mjs';
 import {join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {hostname} from 'node:os';
 import {randomUUID} from 'node:crypto';
-import {leer,error,oficial,comprobarPaquete,CONFIANZA} from './contrato.mjs';
+import {leer,error,oficial,comprobarPaquete,CONFIANZA,atomico} from './contrato.mjs';
 import {inicio,prepararAdaptacionDesdeCanal} from './canal.mjs';
 import {actualizar,revisar,recuperar} from '../actualizar.mjs';
 import {adaptarYActualizar} from './adaptar-publicacion.mjs';
 export function arquitecturaNativa(valor){const a=String(valor).toLowerCase();if(['amd64','x64'].includes(a))return 'x64';if(['arm64','aarch64'].includes(a))return 'arm64';throw error('ARQUITECTURA_NO_ADMITIDA','Mind admite Windows x64 y ARM64');}
 export async function gestionar(raiz,pedido){
  const op=pedido??{operacion:'inicio'};if(!op||typeof op!=='object'||Array.isArray(op))throw error('PEDIDO_INVALIDO','El pedido debe ser un objeto JSON');
- if(op.operacion==='inicio')return inicio({destino:raiz});
+ if(op.operacion==='inicio'){
+  const r=await inicio({destino:raiz}),actual=leer(join(raiz,'Motor/version.json')),marca=join(raiz,'Motor/.vistas-version.json');let vistas={estado:'vigentes'};
+  try{
+   const anterior=fs.existsSync(marca)?leer(marca):null;
+   if(anterior&&anterior.tipo!=='mind-proyeccion')throw Error('Marca de vistas ajena conservada');
+   if(fs.existsSync(join(raiz,'Memoria/Tablas'))&&(!anterior||anterior.motor!==actual.motor)&&(!fs.existsSync(join(raiz,'Memoria/version.json'))||leer(join(raiz,'Memoria/version.json')).memoria===actual.memoria)){
+    const v=await gestionar(raiz,{operacion:'ejecutar',accion:'regenerar',datos:{}});vistas=v.resultado;atomico(marca,{tipo:'mind-proyeccion',motor:actual.motor});
+   }
+   return {...r,vistas,obsidian:prepararObsidian(raiz)};
+  }catch(e){return {...r,vistas,obsidian:{estado:'aplazada',motivo:e.message}};}
+ }
+
+ if(op.operacion==='vista')return prepararObsidian(raiz);
  if(op.operacion==='recuperar')return recuperar(op.destino?resolve(op.destino):raiz);
  if(op.operacion==='revisar')return revisar({origen:raiz,destino:op.destino?resolve(op.destino):raiz});
  if(['actualizar-local','reparar-local'].includes(op.operacion)){if(!op.destino)throw error('PEDIDO_INVALIDO','Falta el destino de actualización');return actualizar({origen:raiz,destino:resolve(op.destino),modo:op.operacion==='reparar-local'?'reparar':'actualizar',simular:op.simular===true,adoptar:op.adoptar===true});}
@@ -24,7 +37,7 @@ export async function gestionar(raiz,pedido){
  }
  if(op.operacion==='adaptar-local'){if(!op.destino)throw error('PEDIDO_INVALIDO','Falta el destino');return adaptarYActualizar({origen:raiz,destino:resolve(op.destino),confirmadoPorPersona:op.confirmadoPorPersona===true,adoptar:op.adoptar===true,simular:op.simular===true});}
  if(op.operacion==='ejecutar'){
-  if(typeof op.accion!=='string'||!['inicializar','buscar','alta','actualizar','retirar','rama','recordar','seguridad','frente','proyecto','cambiar','uso','operaciones','liberar','coleccion'].includes(op.accion))throw error('PEDIDO_INVALIDO','Acción no admitida');
+  if(typeof op.accion!=='string'||!['nube','regenerar','inicializar','buscar','alta','actualizar','retirar','rama','recordar','seguridad','frente','proyecto','cambiar','uso','operaciones','liberar','coleccion'].includes(op.accion))throw error('PEDIDO_INVALIDO','Acción no admitida');
   // El canal se consulta solo en la operación inicio, al empezar a usar Mind; cada acción comprueba recuperación y candados locales.
   recuperar(raiz);
   if(fs.existsSync(join(raiz,'Motor/.actualizando.lock')))throw error('ACTUALIZACION_OCUPADA','Actualización en curso; repetir al terminar');
@@ -34,7 +47,7 @@ export async function gestionar(raiz,pedido){
   const r=spawnSync(process.execPath,[join(raiz,'Motor/ejecutar.mjs'),op.accion,join(raiz,'Memoria'),'-'],{cwd:raiz,encoding:'utf8',windowsHide:true,input:JSON.stringify(op.datos??{}),maxBuffer:64*1024*1024});
   if(r.error)throw error('FUNCION_FALLIDA','No se pudo ejecutar la función: '+r.error.message);
   let datos;try{datos=JSON.parse(r.stdout);}catch{}
-  if(r.status!==0)throw error('FUNCION_FALLIDA',(r.stderr??'').trim()||'La función no terminó',datos);return {resultado:datos};
+  if(r.status!==0)throw error('FUNCION_FALLIDA',(r.stderr??'').trim()||'La función no terminó',datos);if(['regenerar','alta','actualizar','proyecto','frente','cambiar','coleccion','nube','retirar'].includes(op.accion)){try{return {resultado:datos,obsidian:prepararObsidian(raiz)};}catch(e){return {resultado:datos,obsidian:{estado:'aplazada',motivo:e.message}};}}return {resultado:datos};
   }finally{if(fs.existsSync(sesion)&&leer(sesion).token===token)fs.unlinkSync(sesion);}
  }
  throw error('PEDIDO_INVALIDO','Operación no admitida');
