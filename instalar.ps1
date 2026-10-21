@@ -1,7 +1,7 @@
 # Mind by Api D'Uniam Enterprises - instalador y reparador.
 # Windows PowerShell 5.1 o superior. Solo ASCII a proposito: se ejecuta tal cual llega por la red.
 #
-#   irm https://raw.githubusercontent.com/aldo-boop/mind-by-api-duniam/main/instalar.ps1 | iex
+#   irm https://raw.githubusercontent.com/aldo-boop/Mind/main/instalar.ps1 | iex
 #
 # Instala Mind en el Escritorio (carpeta "Mind"). Si ya hay un Mind, lo actualiza o lo repara
 # conservando Memoria y piezas propias. Variables opcionales: MIND_DESTINO, MIND_SIN_PREGUNTAS.
@@ -11,7 +11,7 @@ function Install-Mind {
     $ProgressPreference = 'SilentlyContinue'
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch {}
 
-    $base = if ($env:MIND_BASE) { $env:MIND_BASE.TrimEnd('/') } else { 'https://aldo-boop.github.io/mind-by-api-duniam' }
+    $base = if ($env:MIND_BASE) { $env:MIND_BASE.TrimEnd('/') } else { 'https://aldo-boop.github.io/Mind' }
     $destino = if ($env:MIND_DESTINO) { $env:MIND_DESTINO.Trim() } else { Join-Path ([Environment]::GetFolderPath('Desktop')) 'Mind' }
     $destino = [IO.Path]::GetFullPath($destino).TrimEnd('\')
     $tmp = Join-Path ([IO.Path]::GetTempPath()) ('mind-instalacion-' + [guid]::NewGuid().ToString('N').Substring(0, 8))
@@ -67,6 +67,9 @@ function Install-Mind {
             [IO.Compression.ZipFile]::ExtractToDirectory($zip, $destino)
             $hecho = 'instalado'
         }
+
+        # Un ZIP no guarda carpetas vacias: se crean las que nombran Bienvenida y Funciones.
+        foreach ($c in 'Motor\Capacidades\Base', 'Motor\Capacidades\Del usuario', 'Motor\Funciones\Del usuario') { New-Item -ItemType Directory -Force -Path (Join-Path $destino $c) | Out-Null }
 
         Write-Host 'Comprobando cada archivo contra el manifiesto oficial...'
         $revision = Ejecutar-Mind (Join-Path $destino 'Mind.cmd') @{ operacion = 'revisar' }

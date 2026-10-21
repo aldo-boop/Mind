@@ -7,7 +7,9 @@ test('orden aprobado, medidas y presupuesto sin truncar silenciosamente',()=>{
  t.alta('perfil',{tipo:'faceta',faceta:'F',afirmacion:'A'});
  t.alta('proyectos',{tipo:'proyecto',nombre:'P',estado:'activo'});
  e=entrada(motor,t.raiz);assert.deepEqual(e.rutas.map(p=>p.split(/[\\/]/).at(-1)),['Bienvenida.md','Inicio.md']);
- writeFileSync(join(t.raiz,'Vistas','Inicio.md'),'X'.repeat(9000));e=entrada(motor,t.raiz);assert.equal(e.cabe,false);assert.ok(e.texto.includes('X'.repeat(9000)));
+ t.alta('decisiones',{tipo:'regla-usuario',proyecto:'General',decision:'X'.repeat(9000),estado:'confirmada'});e=entrada(motor,t.raiz);assert.equal(e.cabe,false);assert.ok(e.texto.includes('X'.repeat(9000)));
+ // Se mide lo que proyectará este Motor: una vista vieja guardada no cuenta.
+ const t2=abrirTablas(mkdtempSync(join(tmpdir(),'mind-v2-entrada-'))).inicializar();t2.alta('perfil',{tipo:'faceta',faceta:'F',afirmacion:'A'});writeFileSync(join(t2.raiz,'Vistas','Inicio.md'),'X'.repeat(9000));e=entrada(motor,t2.raiz);assert.equal(e.cabe,true);assert.ok(!e.texto.includes('XXXX'));
 });
 test('El arranque lee una Memoria anterior sin tocarla; Tablas no escribe en ella; adaptar exige confirmación y conserva respaldo',()=>{const motor=resolve(fileURLToPath(new URL('.',import.meta.url))),t=abrirTablas(mkdtempSync(join(tmpdir(),'mind-v2-entrada-version-'))).inicializar();t.alta('conceptos',{concepto:'Velocidad',tema:'Física'});writeFileSync(join(t.raiz,'version.json'),JSON.stringify({memoria:0}));
  const huella=()=>readdirSync(t.raiz,{recursive:true}).sort().map(n=>{const p=join(t.raiz,n);return statSync(p).isFile()?n+':'+readFileSync(p,'base64'):n;}).join('|'),antes=huella();

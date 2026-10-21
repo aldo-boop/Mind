@@ -278,7 +278,7 @@ export function abrirTablas(memoria) {
       const dir=seguro(join(raiz,'Vistas',TITULOS[t]));
       if(existsSync(dir)) for(const n of readdirSync(dir)) if(n.endsWith('.md')&&!vivas.has(n.slice(0,-3))) quitarVista(TITULOS[t]+'/'+n);
     }
-    let secControlador=null, secPerfil=null, secReglas=null;
+    let secControlador=null, secPerfil=null, secReglas=null, idxProyectos=null, idxPerfil=null;
     const disponibles=proyectos.filter(f=>f.estado!=='terminado');
     const padres=disponibles.filter(f=>f.tipo==='proyecto'&&f.estado==='activo');
     const frentesTodos=disponibles.filter(f=>f.tipo==='frente');
@@ -343,10 +343,12 @@ export function abrirTablas(memoria) {
         const nombres=new Map(padres.filter(p=>p.estado==='activo').map(p=>[p.id,p.nombre]));
         const activos=frentes.filter(f=>f.estado==='activo'&&nombres.has(f.proyecto));
         activos.sort((a,b)=>{const x=nombres.get(a.proyecto),y=nombres.get(b.proyecto);return x===y?a.nombre.localeCompare(b.nombre,'es'):x==='General'?-1:y==='General'?1:x.localeCompare(y,'es');});
-        // El Controlador enlaza cada frente a su ficha; el proyecto se enlaza solo en su primera línea.
-        const filas=activos.map((f,i)=>`| ${i&&activos[i-1].proyecto===f.proyecto?celda(nombres.get(f.proyecto)):nodo('Proyectos','proyecto',{id:f.proyecto},nombres.get(f.proyecto))} | ${nodo('Proyectos','frente',f,f.nombre)} | ${celda(f.turno)} | ${celda(f.loQueSigue)} |`);
-        for(const p of padres.filter(p=>p.estado==='activo'&&!activos.some(f=>f.proyecto===p.id))) filas.push(`| ${nodo('Proyectos','proyecto',p,p.nombre)} | | | |`);
+        // Inicio se lee en cada arranque: nombres sin rutas. Los enlaces a cada ficha viven en Índice.md, que no se lee al arrancar.
+        const sinFrentes=padres.filter(p=>p.estado==='activo'&&!activos.some(f=>f.proyecto===p.id));
+        const filas=activos.map(f=>`| ${celda(nombres.get(f.proyecto))} | ${celda(f.nombre)} | ${celda(f.turno)} | ${celda(f.loQueSigue)} |`);
+        for(const p of sinFrentes) filas.push(`| ${celda(p.nombre)} | | | |`);
         secControlador=['## Controlador','','| Proyecto | Frente | Turno | Lo que sigue |','|---|---|---|---|',...filas];
+        idxProyectos=['## Proyectos','',...activos.flatMap((f,i)=>[...(i&&activos[i-1].proyecto===f.proyecto?[]:['- '+nodo('Proyectos','proyecto',{id:f.proyecto},nombres.get(f.proyecto))]),'  - '+nodo('Proyectos','frente',f,f.nombre)]),...sinFrentes.map(p=>'- '+nodo('Proyectos','proyecto',p,p.nombre))];
       }
     }
     const facetas=perfil.filter(f=>f.tipo==='faceta');
@@ -367,9 +369,10 @@ export function abrirTablas(memoria) {
       publicar('Perfil',vistasPerfil);
       if(tiene('perfil')) {
         const raices=facetasVisibles.filter(f=>!f.perteneceA);
-        const resumen=['## Perfil','',...raices.map(f=>'- '+nodo('Perfil','faceta',f,f.faceta)+': '+celda(f.afirmacion||'Sin resumen.'))];
+        const resumen=['## Perfil','',...raices.map(f=>'- '+celda(f.faceta)+': '+celda(f.afirmacion||'Sin resumen.'))];
         if(!raices.length) resumen.push('Sin facetas registradas.');
         secPerfil=resumen;
+        if(raices.length) idxPerfil=['## Perfil','',...raices.map(f=>'- '+nodo('Perfil','faceta',f,f.faceta))];
       }
     }
     const reglas=[...decisiones.filter(f=>f.proyecto==='General'&&f.tipo==='regla-usuario'&&['confirmada','corregida'].includes(f.estado)).map(f=>'- '+celda(f.decision)+(f.condicion?' (Cuando: '+celda(f.condicion)+')':'')+(f.alcance?' · Alcance: '+celda(f.alcance):'')+(f.limite?' · Volver a consultar: '+celda(f.limite):''))];
@@ -377,9 +380,11 @@ export function abrirTablas(memoria) {
     // Una sola vista de arranque: Reglas del usuario, Perfil y Controlador en Inicio.md.
     for(const anterior of ['Controlador.md','Resumen del Perfil.md','Reglas del usuario.md']) quitarVista(anterior);
     if(['perfil','proyectos','decisiones'].every(t=>cache.has(t))) {
-      const secciones=[secReglas,secPerfil,secControlador].filter(Boolean);
+      const secciones=[secReglas,secPerfil,secControlador].filter(Boolean),indice=[idxPerfil,idxProyectos].filter(Boolean);
+      if(indice.length) ponerVista('Índice.md',['# Índice','','Enlaces a cada ficha del Perfil y de los proyectos. No se lee al arrancar.','',...indice.flatMap(x=>[...x,''])]);
+      else quitarVista('Índice.md');
       if(secciones.length) {
-        const lineas=['# Inicio','',...secciones.flatMap(x=>[...x,''])];
+        const lineas=['# Inicio','',...(indice.length?['Fichas: [[Memoria/Vistas/Índice|Índice]], o por nombre en Memoria/Vistas.','']:[]),...secciones.flatMap(x=>[...x,''])];
         ponerVista('Inicio.md',lineas);
         const tokens=Math.ceil((marca+lineas.join('\n')+'\n').length/4)+tokensBienvenida();
         if(tokens>LIMITES.total) avisos.push(`Arranque: Bienvenida + Inicio.md suman unos ${tokens} tokens y superan ${LIMITES.total}; conviene resumir con la persona.`);

@@ -66,7 +66,7 @@ function arbol19(t) {
  }
  // Inicio.md es el índice de arranque: puede enlazar proyectos y frentes; el árbol de detalle se cuenta sin él.
  const detalle=p=>p.startsWith('Perfil/')||p.startsWith('Proyectos/');
- for(const [p,padres] of entrantes)if(detalle(p))assert.ok([...padres].filter(o=>o!=='Inicio.md').length<=1,'Un solo padre: '+p);
+ for(const [p,padres] of entrantes)if(detalle(p))assert.ok([...padres].filter(o=>o!=='Inicio.md'&&o!=='Índice.md').length<=1,'Un solo padre: '+p);
  const alcanzadas=new Set(),visitar=(p,camino=new Set())=>{assert.ok(!camino.has(p),'Sin ciclos');alcanzadas.add(p);const otro=new Set([...camino,p]);for(const [,dest] of vistas.get(p).matchAll(/\[\[Memoria\/Vistas\/([^|\]]+)\|[^\]]*\]\]/g))visitar(dest+'.md',otro);};
  if(vistas.has('Inicio.md'))visitar('Inicio.md');
  for(const p of vistas.keys())if(detalle(p))assert.ok(alcanzadas.has(p),'Alcanzable desde Inicio: '+p);
@@ -225,7 +225,7 @@ test('con autonomía confirmada el Motor abre ramas sin preguntar, y una tabla d
  assert.equal(buscar(t,{tabla:'conceptos',rama,texto:'inducción'})[0].fila.concepto,'Inducción electromagnética');
  assert.equal(buscar(t,{tabla:'conceptos',texto:'inducción'}).length,0);
 });
-test('la ficha del frente trae su proyecto y los índices conectados; el Controlador enlaza el frente',()=>{
+test('la ficha del frente trae su proyecto y los índices conectados; el Controlador nombra el frente sin ruta',()=>{
  const t=nueva(),p=t.alta('proyectos',{tipo:'proyecto',nombre:'Taller Aurora',descripcion:'Talleres',estado:'activo'});
  const f=t.alta('proyectos',{tipo:'frente',nombre:'Contenido de muestra',proyecto:p.id,estado:'activo',loQueSigue:'Grabar'});
  t.alta('decisiones',{proyecto:p.id,decision:'Fondo blanco',estado:'confirmada'});
@@ -235,7 +235,11 @@ test('la ficha del frente trae su proyecto y los índices conectados; el Control
  assert.match(fichas[0],/Del proyecto[\s\S]*Talleres[\s\S]*Fondo blanco/);
  assert.match(fichas[0],/Para trabajar[\s\S]*Recursos de producto — D:\/Aurora\/Recursos[\s\S]*Bolso de muestra/);
  assert.ok(fichas[0].includes('ID: '+f.id));
- assert.match(readFileSync(join(t.raiz,'Vistas','Inicio.md'),'utf8'),/\[\[Memoria\/Vistas\/Proyectos\/frente - Contenido de muestra--[0-9a-f]{16}\|Contenido de muestra\]\]/);
+ const inicio=readFileSync(join(t.raiz,'Vistas','Inicio.md'),'utf8');
+ assert.match(inicio,/\| Taller Aurora \| Contenido de muestra \|\s*\| Grabar \|/);
+ assert.ok(!inicio.includes('[[Memoria/Vistas/Proyectos'),'Inicio no lleva rutas de fichas');
+ assert.ok(inicio.includes('[[Memoria/Vistas/Índice|Índice]]'),'Inicio lleva al Índice');
+ assert.match(readFileSync(join(t.raiz,'Vistas','Índice.md'),'utf8'),/\[\[Memoria\/Vistas\/Proyectos\/frente - Contenido de muestra--[0-9a-f]{16}\|Contenido de muestra\]\]/);
  arbol19(t);
 });
 

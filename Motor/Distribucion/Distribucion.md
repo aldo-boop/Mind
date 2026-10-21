@@ -18,7 +18,7 @@ Operaciones de mantenimiento: `inicio`, `revisar`, `recuperar`, `actualizar-loca
 
 El descriptor `canal.json` se firma con Ed25519. `confianza.json` fija canal HTTPS y claves públicas autorizadas. Solo se ejecuta una publicación que pase firma, compatibilidad, hashes, tamaño y validación de rutas. El ZIP se extrae únicamente en un candidato nuevo. URLs del paquete deben permanecer en el origen del canal; no se siguen redirecciones implícitas. Las publicaciones no pueden degradar la versión instalada ni reutilizar contradictoriamente una secuencia ya vista. Un descriptor vencido no se aplica y se conserva la versión instalada.
 
-Desde dev.24 el canal oficial es `https://aldo-boop.github.io/mind-by-api-duniam/canal.json` (GitHub Pages, sin redirecciones, mismo origen que el ZIP) y `confianza.json` fija la clave pública `api-duniam-1`. La clave privada vive fuera del taller y del repositorio; el paquete nunca la lleva. Los mecanismos completos se demuestran con un servidor local y firmas ficticias; ese permiso local solo existe en la API de pruebas, no en los pedidos JSON, y la suite aísla su origen con un `confianza.json` sin canal.
+Desde dev.24 el canal oficial es `https://aldo-boop.github.io/Mind/canal.json` (GitHub Pages, sin redirecciones, mismo origen que el ZIP) y `confianza.json` fija la clave pública `api-duniam-1`. La clave privada vive fuera del taller y del repositorio; el paquete nunca la lleva. Los mecanismos completos se demuestran con un servidor local y firmas ficticias; ese permiso local solo existe en la API de pruebas, no en los pedidos JSON, y la suite aísla su origen con un `confianza.json` sin canal.
 
 ## Instalar y reparar con un comando
 

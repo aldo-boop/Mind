@@ -3,14 +3,25 @@ import * as fs from 'node:fs';
 import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {randomUUID} from 'node:crypto';
-import {hostname} from 'node:os';
+import {hostname,tmpdir} from 'node:os';
 import {spawnSync} from 'node:child_process';
 import {META,REGISTRO,hash,leer,oficial,sinEnlaces,dentro,atomico,comprobarPaquete,validarManifiesto,versionMemoria,versionInstalada,error} from './Distribucion/contrato.mjs';
+// Inicio tal como lo proyectará el Motor que se instala: la vista guardada puede venir de un Motor anterior.
+// Proyecta en una copia temporal de Tablas, que se borra siempre porque contiene datos personales; si no se puede, usa la vista guardada.
+function inicioProyectado(motor,memoria){
+ const tablas=join(memoria,'Tablas');if(!fs.existsSync(tablas))return null;
+ const tmp=fs.mkdtempSync(join(tmpdir(),'mind-arranque-')),copia=join(tmp,'Memoria');
+ try{fs.cpSync(tablas,join(copia,'Tablas'),{recursive:true});if(fs.existsSync(join(memoria,'version.json')))fs.copyFileSync(join(memoria,'version.json'),join(copia,'version.json'));
+  const guion='const {abrirTablas}=await import(process.argv[1]);abrirTablas(process.argv[2]).regenerar();';
+  const r=spawnSync(process.execPath,['--input-type=module','-e',guion,pathToFileURL(join(motor,'Funciones/Base/Tablas/tablas.mjs')).href,copia],{encoding:'utf8',windowsHide:true});
+  const p=join(copia,'Vistas/Inicio.md');return r.status===0?(fs.existsSync(p)?fs.readFileSync(p,'utf8'):''):null;
+ }catch{return null;}finally{fs.rmSync(tmp,{recursive:true,force:true});}
+}
 export function lecturaArranque(motor,memoria){
  const bienvenida=join(motor,'..','Bienvenida.md');if(!fs.existsSync(bienvenida))throw Error('Falta '+bienvenida);const tb=fs.readFileSync(bienvenida,'utf8');
  for(const n of ['AGENTS.md','CLAUDE.md','GEMINI.md'])if(!fs.existsSync(join(motor,'..',n))||!fs.readFileSync(join(motor,'..',n),'utf8').includes('Bienvenida.md'))throw Error(n+' debe existir y llevar a Bienvenida.md');
  if(!tb.includes('Memoria/Vistas/Inicio.md'))throw Error('Bienvenida.md no nombra Memoria/Vistas/Inicio.md');
- const inicio=join(memoria,'Vistas/Inicio.md'),rutas=[bienvenida,...(fs.existsSync(inicio)?[inicio]:[])],texto=rutas.map(p=>fs.readFileSync(p,'utf8').trim()).join('\n\n')+'\n',tokensMind=Math.ceil(tb.length/4),tokensEstimados=Math.ceil(texto.length/4);
+ const inicio=join(memoria,'Vistas/Inicio.md'),rutas=[bienvenida,...(fs.existsSync(inicio)?[inicio]:[])],proyectado=inicioProyectado(motor,memoria),texto=[tb,...(proyectado!==null?(proyectado?[proyectado]:[]):rutas.slice(1).map(p=>fs.readFileSync(p,'utf8')))].map(t=>t.trim()).join('\n\n')+'\n',tokensMind=Math.ceil(tb.length/4),tokensEstimados=Math.ceil(texto.length/4);
  return {texto,rutas,caracteres:texto.length,tokensMind,tokensEstimados,cabe:tokensMind<=1000&&tokensEstimados<=2000,limiteMind:1000,limite:2000};
 }
 const LOCK='Motor/.actualizando.lock',JOURNAL='Motor/.actualizacion.json';
