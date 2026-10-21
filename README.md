@@ -7,7 +7,7 @@
 En Windows 10 u 11, abre PowerShell y pega:
 
 ```powershell
-irm https://raw.githubusercontent.com/aldo-boop/mind/main/instalar.ps1 | iex
+irm https://raw.githubusercontent.com/aldo-boop/mind-by-api-duniam/main/instalar.ps1 | iex
 ```
 
 Mind queda en el Escritorio, en la carpeta `Mind`. Abre tu IA dentro de esa carpeta (Claude Code, Codex, Gemini, Cursor, Copilot o cualquiera que lea archivos y ejecute comandos locales) y escribe «hola». No hay formulario previo: la Memoria empieza vacía y se llena trabajando.
@@ -23,7 +23,7 @@ Mind consulta el canal oficial cuando empiezas a usarlo y aplica solo versiones 
 
 ## Qué hay aquí
 
-Este repositorio es el taller del Motor: código, reglas base, pruebas y el instalador. Las versiones firmadas (ZIP con Node portátil) se publican en https://aldo-boop.github.io/mind/. Memoria y datos personales nunca entran al paquete.
+Este repositorio es el taller del Motor: código, reglas base, pruebas y el instalador. Las versiones firmadas (ZIP con Node portátil) se publican en https://aldo-boop.github.io/mind-by-api-duniam/. Memoria y datos personales nunca entran al paquete.
 
 Para construir una versión: restaura `Motor/Runtime/win32-*/node.exe` desde las URL y huellas de cada `procedencia.json` (no están en git por su tamaño), ejecuta `Motor/probar.mjs` y `Motor/Distribucion/construir.mjs` (ver `Motor/Distribucion/Distribucion.md`). La clave privada de publicación vive fuera del repositorio.
 
