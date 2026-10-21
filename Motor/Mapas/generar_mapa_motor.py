@@ -234,7 +234,7 @@ card(3696, 1476, 384, 120, 'Dentro de Mind', 'Crea o vincula en Memoria. Opción
 info_arrow([(3504, 1206), (3600, 1206), (3600, 1068), (3672, 1068)])
 
 # Instalación: entrada pública de distribución, separada de las funciones del Motor.
-card(3096, 144, 1008, 288, 'Instalación pública - instalar.ps1', 'PowerShell: irm https://byaldodaniel.github.io/Mind/instalar.ps1 | iex\nHTTPS, canal estable, tamaño y SHA-256; después verifica el manifiesto.\nBienvenida, tres pasos y cómo empezar. Instala, actualiza o repara.\nPaquete genérico: sin Memoria, credenciales ni datos de quien lo desarrolla.\nLa referencia global a Mind se agrega solo si la persona acepta.', dark=True, size=16, body_size=14)
+card(3096, 144, 1008, 288, 'Instalación pública - instalar.ps1', 'Entrada de marca: irm https://byaldodaniel.pages.dev/mind/instalar.ps1 | iex\nCloudflare sirve el instalador; el canal y ZIP firmados viven en GitHub Pages.\nAlternativa: https://byaldodaniel.github.io/Mind/instalar.ps1\nHTTPS, canal estable, tamaño y SHA-256; después verifica el manifiesto.\nBienvenida, tres pasos y cómo empezar. Instala, actualiza o repara.\nPaquete genérico: sin Memoria, credenciales ni datos de quien lo desarrolla.\nLa referencia global a Mind se agrega solo si la persona acepta.', dark=True, size=16, body_size=14)
 arrow([(4104, 336), (4284, 336)])
 
 # Mantenimiento independiente, implementado en el Bloque 5.

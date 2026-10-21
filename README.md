@@ -7,7 +7,7 @@
 En Windows 10 u 11, abre PowerShell y pega:
 
 ```powershell
-irm https://byaldodaniel.github.io/Mind/instalar.ps1 | iex
+irm https://byaldodaniel.pages.dev/mind/instalar.ps1 | iex
 ```
 
 Mind queda en el Escritorio, en la carpeta `Mind`. Abre tu IA dentro de esa carpeta (Claude Code, Codex, Gemini, Cursor, Copilot o cualquiera que lea archivos y ejecute comandos locales) y escribe «hola». No hay formulario previo: la Memoria empieza vacía y se llena trabajando.
